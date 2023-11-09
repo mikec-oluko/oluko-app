@@ -42,14 +42,14 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
   @override
   void initState() {
     _personalizedVideosList =
-        CoachHelperFunctions.createPersonalizedVideoFromContent(mentoredVideos: widget.coachAnnotation ?? [], videoMessages: widget.coachVideoMessage ?? []);
+        CoachHelperFunctions.createPersonalizedVideoFromContent(mentoredVideos: widget.coachAnnotation, videoMessages: widget.coachVideoMessage);
 
     setState(() {
       content.addAll(_personalizedVideosList);
       filteredContent = content;
       filteredContent = contentSortedByDate();
-      _updatedMessageVideos = widget.coachVideoMessage ?? [];
-      _updatedAnnotations = widget.coachAnnotation ?? [];
+      _updatedMessageVideos = widget.coachVideoMessage;
+      _updatedAnnotations = widget.coachAnnotation;
     });
     super.initState();
   }
@@ -99,7 +99,9 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
               showTitle: true,
               showActions: true,
               centerTitle: true,
-              title: OlukoLocalizations.get(context, 'annotatedVideos'),
+              title: (_videoListsNotNull && _videoListsNotEmpty)
+                  ? OlukoLocalizations.get(context, 'coachMessageVideo')
+                  : OlukoLocalizations.get(context, 'annotatedVideos'),
               actions: [
                 Row(
                   children: [
@@ -159,6 +161,9 @@ class _MentoredVideosPageState extends State<MentoredVideosPage> {
       );
     });
   }
+
+  bool get _videoListsNotEmpty => (_updatedMessageVideos.isNotEmpty || widget.coachVideoMessage.isNotEmpty);
+  bool get _videoListsNotNull => _updatedMessageVideos != null || widget.coachVideoMessage != null;
 
   List<Widget> segmentCard({List<CoachPersonalizedVideo> videoContent}) {
     List<Widget> contentForSection = [];

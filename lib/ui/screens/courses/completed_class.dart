@@ -103,7 +103,7 @@ class _CompletedClassState extends State<CompletedClass> {
                 borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                 child: Container(
                   height: ScreenUtils.height(context) * 0.12,
-                  color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                  color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
                   width: ScreenUtils.width(context),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,

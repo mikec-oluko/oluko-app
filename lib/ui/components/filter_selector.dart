@@ -102,7 +102,7 @@ class _State<T extends Base> extends State<FilterSelector> {
       ),
       child: Container(
           decoration: const BoxDecoration(
-              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth, border: Border(top: BorderSide(color: OlukoColors.grayColorFadeTop))),
+              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight, border: Border(top: BorderSide(color: OlukoColors.grayColorFadeTop))),
           width: ScreenUtils.width(context),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),

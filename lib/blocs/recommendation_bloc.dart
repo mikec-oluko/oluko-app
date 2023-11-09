@@ -38,9 +38,9 @@ class RecommendationBloc extends Cubit<RecommendationState> {
     }
   }
 
-  void removeRecomendedCourse(String userId, String courseId) {
+  void removeRecommendedCourse(String userId, String courseId) {
     try {
-      RecommendationRepository().removeRecomendedCourse(userId, courseId);
+      RecommendationRepository().removeRecommendedCourse(userId, courseId);
     } catch (e) {
       return;
     }
@@ -84,11 +84,8 @@ class RecommendationBloc extends Cubit<RecommendationState> {
       //Get a Map of Courses and their recommender users (Map<CourseId, List<UserResponse>)
       Map<String, List<UserResponse>> coursesRecommendedByUsers = {};
       coursesRecommendedByUserIds.entries.forEach((MapEntry<String, List<String>> coursesRecommendedByIdsEntry) {
-        MapEntry<String, List<UserResponse>> coursesRecommendedByUserEntry = MapEntry(
-            coursesRecommendedByIdsEntry.key,
-            coursesRecommendedByIdsEntry.value
-                .map((String userId) => recommendationUsers.where((user) => user.id == userId).toList()[0])
-                .toList());
+        MapEntry<String, List<UserResponse>> coursesRecommendedByUserEntry = MapEntry(coursesRecommendedByIdsEntry.key,
+            coursesRecommendedByIdsEntry.value.map((String userId) => recommendationUsers.where((user) => user.id == userId).toList()[0]).toList());
         coursesRecommendedByUsers[coursesRecommendedByUserEntry.key] = coursesRecommendedByUserEntry.value;
       });
 

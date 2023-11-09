@@ -17,7 +17,7 @@ import 'package:chewie/src/models/subtitle_model.dart';
 
 class OlukoMaterialControls extends StatefulWidget {
   bool showOptions;
-   OlukoMaterialControls({Key key,this.showOptions=false}) : super(key: key);
+  OlukoMaterialControls({Key key, this.showOptions = false}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -91,7 +91,7 @@ class _OlukoMaterialControlsState extends State<OlukoMaterialControls> with Sing
                       offset: Offset(0.0, notifier.hideStuff ? barHeight * 0.8 : 0.0),
                       child: _buildSubtitles(context, chewieController.subtitle),
                     ),
-                  widget.showOptions ?_buildBottomBar(context):SizedBox(),
+                  widget.showOptions ? _buildBottomBar(context) : SizedBox(),
                 ],
               ),
             ],
@@ -139,7 +139,8 @@ class _OlukoMaterialControlsState extends State<OlukoMaterialControls> with Sing
           child: Row(
             children: [
               _buildSubtitleToggle(),
-            if(widget.showOptions) if (chewieController.showOptions) _buildOptionsButton(),
+              if (widget.showOptions)
+                if (chewieController.showOptions) _buildOptionsButton(),
             ],
           ),
         ),
@@ -151,7 +152,7 @@ class _OlukoMaterialControlsState extends State<OlukoMaterialControls> with Sing
     _hideTimer?.cancel();
 
     final chosenSpeed = await showModalBottomSheet<double>(
-      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+      backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
       context: context,
       isScrollControlled: true,
       useRootNavigator: chewieController.useRootNavigator,

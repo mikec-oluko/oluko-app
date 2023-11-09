@@ -33,7 +33,7 @@ class CoachAssignmentBloc extends Cubit<CoachAssignmentState> {
     if (subscription != null) {
       subscription.cancel();
       subscription = null;
-    }    
+    }
     emitCoachAssignmentDispose();
   }
 
@@ -50,14 +50,24 @@ class CoachAssignmentBloc extends Cubit<CoachAssignmentState> {
       rethrow;
     }
   }
-  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getCoachAssignmentStatusStream(String userId)  {
-    CoachAssignment coachAssignmentResponse; 
+
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getCoachAssignmentStatusStream(String userId) {
+    CoachAssignment coachAssignmentResponse;
     return subscription ??= CoachRepository.getCoachAssignmentByUserIdStream(userId).listen((snapshot) async {
-      snapshot.docs.forEach((doc) {
+      try {
+        snapshot.docs.forEach((doc) {
           final Map<String, dynamic> content = doc.data();
           coachAssignmentResponse = CoachAssignment.fromJson(content);
         });
-      emit(CoachAssignmentResponse(coachAssignmentResponse: coachAssignmentResponse));
+        emit(CoachAssignmentResponse(coachAssignmentResponse: coachAssignmentResponse));
+      } catch (exception, stackTrace) {
+        await Sentry.captureException(
+          exception,
+          stackTrace: stackTrace,
+        );
+        emit(CoachAssignmentFailure(exception: exception));
+        rethrow;
+      }
     });
   }
 

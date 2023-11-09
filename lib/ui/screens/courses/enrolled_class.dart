@@ -123,12 +123,7 @@ class _EnrolledClassState extends State<EnrolledClass> {
                                             style: OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold),
                                           ),
                                         ),
-                                        ClassExpansionPanels(
-                                          screenController: _scrollController,
-                                          classes: classState.classes,
-                                          onPressedMovement: (BuildContext context, MovementSubmodel movement) =>
-                                              Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement}),
-                                        )
+                                        ClassExpansionPanels(screenController: _scrollController, classes: classState.classes, onPressedMovement: () {}),
                                       ]))),
                               SizedBox(
                                 height: 150,

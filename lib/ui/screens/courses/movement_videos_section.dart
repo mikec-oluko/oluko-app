@@ -10,7 +10,7 @@ import 'package:oluko_app/utils/screen_utils.dart';
 
 class MovementVideosSection extends StatefulWidget {
   final Segment segment;
-  final Function(BuildContext, MovementSubmodel) onPressedMovement;
+  final Function() onPressedMovement;
   final Widget action;
 
   MovementVideosSection({this.segment, this.onPressedMovement, this.action});
@@ -33,7 +33,7 @@ class _State extends State<MovementVideosSection> {
     return Container(
         decoration: OlukoNeumorphism.isNeumorphismDesign
             ? BoxDecoration(
-                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(19), topRight: Radius.circular(19)))
             : decorationImage(),
         child: Column(children: [

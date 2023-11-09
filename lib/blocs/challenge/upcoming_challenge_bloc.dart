@@ -26,28 +26,28 @@ class UniqueChallengesSuccess extends UpcomingChallengesState {
 class UpcomingChallengesBloc extends Cubit<UpcomingChallengesState> {
   UpcomingChallengesBloc() : super(LoadingUpcomingChallenges());
 
-  Future<void> getUniqueChallengeCards(
-      {@required String userId, @required List<ChallengeNavigation> listOfChallenges, bool isCurrentUser = true, UserResponse userRequested}) async {
-    List<Widget> challengesCards = [];
-    Map<String, List<ChallengeNavigation>> challengeMap = {};
-    Map<String, bool> lockedChallenges = {};
+  Future<void> getUniqueChallengeCards({
+    @required String userId,
+    @required List<ChallengeNavigation> listOfChallenges,
+    bool isCurrentUser = true,
+    UserResponse userRequested,
+  }) async {
     try {
       emit(LoadingUpcomingChallenges());
-      if (listOfChallenges.isNotEmpty) {
-        for (var challenge in listOfChallenges) {
-          if (challengeMap[challenge.segmentId] == null) {
-            challengeMap[challenge.segmentId] = [];
-          }
-          challengeMap[challenge.segmentId].add(challenge);
-        }
-        for (String id in challengeMap.keys) {
-          List<Challenge> challengeHistory = await ChallengeRepository.getUserChallengesBySegmentId(id, userId);
-          bool challengeWasCompletedBefore =
-              challengeHistory != null ? challengeHistory.where((element) => element.completedAt != null).toList().isNotEmpty : false;
-          lockedChallenges[id] = challengeWasCompletedBefore;
-        }
-        emit(UniqueChallengesSuccess(challengeMap: challengeMap, lockedChallenges: lockedChallenges));
+      if (listOfChallenges.isEmpty) {
+        return;
       }
+      Map<String, List<ChallengeNavigation>> challengeMap = {};
+      Map<String, bool> lockedChallenges = {};
+      for (var challenge in listOfChallenges) {
+        challengeMap.putIfAbsent(challenge.segmentId, () => []).add(challenge);
+      }
+      await Future.forEach(challengeMap.keys, (String id) async {
+        List<Challenge> challengeHistory = await ChallengeRepository.getUserChallengesBySegmentId(id, userId);
+        bool challengeWasCompletedBefore = challengeHistory?.any((element) => element.completedAt != null) ?? false;
+        lockedChallenges[id] = challengeWasCompletedBefore;
+      });
+      emit(UniqueChallengesSuccess(challengeMap: challengeMap, lockedChallenges: lockedChallenges));
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

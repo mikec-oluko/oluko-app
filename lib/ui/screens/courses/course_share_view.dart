@@ -96,7 +96,7 @@ class _CourseShareViewState extends State<CourseShareView> {
                                           child: IconButton(
                                               onPressed: () async {
                                                 if (userSelectedList.isNotEmpty) {
-                                                  await BlocProvider.of<CourseUserIteractionBloc>(context).recommendCourseToFriends(
+                                                  await BlocProvider.of<CourseUserInteractionBloc>(context).recommendCourseToFriends(
                                                     originUserId: widget.currentUser.id,
                                                     courseRecommendedId: widget.courseToShare.id,
                                                     usersRecommended: userSelectedList,
@@ -210,7 +210,7 @@ class _CourseShareViewState extends State<CourseShareView> {
                                 : Image.asset(
                                     'assets/courses/grey_circle.png',
                                     scale: 4,
-                                    color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                                    color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
                                   ),
                           ),
                         )

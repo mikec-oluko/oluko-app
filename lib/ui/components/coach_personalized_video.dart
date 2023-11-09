@@ -89,21 +89,22 @@ class _CoachPersonalizedVideoComponentState extends State<CoachPersonalizedVideo
                       )
                     ],
                   ),
-                SizedBox(
-                  width: ScreenUtils.width(context) * 0.5,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 5),
-                    child: Text(
-                      widget.personalizedVideo.annotationContent.id == _defaultIntroductionVideoId
-                          ? OlukoLocalizations.get(context, 'introductionVideo')
-                          : widget.personalizedVideo.annotationContent != null
-                              ? widget.personalizedVideo.annotationContent.segmentName ?? OlukoLocalizations.get(context, 'voiceAnnotation')
-                              : widget.personalizedVideo.videoMessageContent.video.name,
-                      style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
-                      overflow: TextOverflow.ellipsis,
+                if (widget.personalizedVideo.annotationContent != null)
+                  SizedBox(
+                    width: ScreenUtils.width(context) * 0.5,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 5),
+                      child: Text(
+                        widget.personalizedVideo.annotationContent.id == _defaultIntroductionVideoId
+                            ? OlukoLocalizations.get(context, 'introductionVideo')
+                            : widget.personalizedVideo.annotationContent != null
+                                ? widget.personalizedVideo.annotationContent.segmentName ?? OlukoLocalizations.get(context, 'voiceAnnotation')
+                                : widget.personalizedVideo.videoMessageContent.video.name,
+                        style: OlukoFonts.olukoMediumFont(customColor: OlukoColors.white, customFontWeight: FontWeight.w500),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
             _getLikeButton(widget.personalizedVideo)

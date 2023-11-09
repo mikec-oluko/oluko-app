@@ -247,7 +247,7 @@ class CoachRepository {
   }
 
   Future<List<CoachTimelineItem>> getTimelineItemsReferenceContent(List<CoachTimelineItem> timelineItemList) async {
-    for (CoachTimelineItem timelineItem in timelineItemList) {
+    final promise = timelineItemList.map((timelineItem) async {
       final DocumentSnapshot ds = await timelineItem.contentReference.get();
 
       switch (timelineItem.contentType) {
@@ -291,7 +291,11 @@ class CoachRepository {
           break;
         default:
       }
-    }
+
+      return timelineItemList;
+    });
+
+    await Future.wait(promise);
     return timelineItemList;
   }
 

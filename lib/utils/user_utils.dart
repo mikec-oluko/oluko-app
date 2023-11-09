@@ -13,11 +13,10 @@ class UserUtils {
   static CircleAvatar avatarImageDefault({double maxRadius, String name, String lastname, Color circleColor, bool isLoadingState = false}) {
     return CircleAvatar(
       maxRadius: maxRadius ?? 30,
-      backgroundColor: circleColor != null
-          ? circleColor
-          : name == null || lastname == null || name == 'null' || lastname == 'null'
+      backgroundColor: circleColor ??
+          (name == null || lastname == null || name == 'null' || lastname == 'null'
               ? OlukoColors.userColor(null, null)
-              : OlukoColors.userColor(name, lastname),
+              : OlukoColors.userColor(name, lastname)),
       child: name != null && name.isNotEmpty
           ? isLoadingState
               ? OlukoCircularProgressIndicator()
@@ -64,7 +63,7 @@ class UserUtils {
   }
 
   static List<String> getNameAndLastNameByFullName(String fullName) {
-  final List<String> nameAndLastName = [];
+    final List<String> nameAndLastName = [];
     if (fullName != null) {
       final List<String> splitName = fullName.split(' ');
       if (splitName.isNotEmpty) {
@@ -74,13 +73,13 @@ class UserUtils {
         }
       }
     }
-  return nameAndLastName;
-}
+    return nameAndLastName;
+  }
 
   static bool userDeviceIsIOS() => Platform.isIOS;
   static bool userDeviceIsAndrioid() => Platform.isAndroid;
 
-  static int getUserAssesmentsQty(Assessment assessment, double userCurrentPlan) => userCurrentPlan != -1
+  static int getUserAssessmentsQty(Assessment assessment, double userCurrentPlan) => userCurrentPlan != -1
       ? userCurrentPlan == 0
           ? assessment.tasks.getRange(0, 2).toList().length
           : assessment.tasks.length

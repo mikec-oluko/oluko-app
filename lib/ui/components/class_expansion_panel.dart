@@ -21,7 +21,7 @@ const SCROLL_DURATION = 600;
 
 class ClassExpansionPanels extends StatefulWidget {
   final List<Class> classes;
-  final Function(BuildContext, MovementSubmodel) onPressedMovement;
+  final Function() onPressedMovement;
   final ScrollController screenController;
   final int totalClasses;
   const ClassExpansionPanels({
@@ -41,18 +41,18 @@ class _State extends State<ClassExpansionPanels> {
 
   @override
   void initState() {
-    _classItems = generateClassItems();
-    _subClassItems = generateSubClassItems();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (OlukoNeumorphism.isNeumorphismDesign) {
-      return expansionPanelNeumorphic();
-    } else {
-      return expansionPanel();
+    if (_classItems.length != widget.classes.length) {
+      _classItems = generateClassItems();
     }
+    if (_subClassItems.length != _classItems.length) {
+      _subClassItems = generateSubClassItems();
+    }
+    return expansionPanelNeumorphic();
   }
 
   Widget expansionPanel() {
@@ -139,39 +139,29 @@ class _State extends State<ClassExpansionPanels> {
     }
   }
 
-  List<Widget> generateSubClassItems() {
-    List<Widget> subClassItems = [];
-    _classItems.forEach((element) {
-      subClassItems.add(getSubpanel(element));
-    });
-    return subClassItems;
-  }
+  List<Widget> generateSubClassItems() => _classItems.map((element) => getSubPanel(element)).toList();
 
-  List<ClassItem> generateClassItems() {
-    List<ClassItem> classItems = [];
-    widget.classes.forEach((element) {
-      ClassItem classItem = ClassItem(classObj: element, expanded: false);
-      classItems.add(classItem);
-    });
-    return classItems;
-  }
+  List<ClassItem> generateClassItems() => widget.classes.map((element) => ClassItem(classObj: element, expanded: false)).toList();
 
-  Widget getSubpanel(ClassItem item) {
+  Widget getSubPanel(ClassItem item) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: getClassWidgets(_classItems.indexOf(item)));
   }
 
   List<Widget> getClassWidgets(int classIndex) {
-    List<Widget> widgets = [];
-    if (widget.classes.length - 1 < classIndex) {
+    if (classIndex >= widget.classes.length) {
       return [];
     }
+
     Class classObj = widget.classes[classIndex];
-    classObj.segments.forEach((segment) {
-      List<MovementSubmodel> movements = ClassService.getClassSegmentMovementSubmodels(segment.sections);
-      widgets.add(ListTile(
-        title: CourseSegmentSection(segment: segment, movements: movements, onPressedMovement: widget.onPressedMovement),
-      ));
-    });
-    return widgets;
+
+    return classObj.segments
+        .map((segment) => ListTile(
+              title: CourseSegmentSection(
+                segment: segment,
+                movements: ClassService.getClassSegmentMovementSubmodels(segment.sections),
+                onPressedMovement: widget.onPressedMovement,
+              ),
+            ))
+        .toList();
   }
 }

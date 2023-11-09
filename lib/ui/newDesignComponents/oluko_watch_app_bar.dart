@@ -20,7 +20,7 @@ class _OlukoWatchAppBarState extends State<OlukoWatchAppBar> {
   @override
   Widget build(BuildContext context) {
     return PreferredSize(
-      preferredSize: Size.fromHeight(kToolbarHeight),
+      preferredSize: const Size.fromHeight(kToolbarHeight),
       child: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0.0,
@@ -37,11 +37,11 @@ class _OlukoWatchAppBarState extends State<OlukoWatchAppBar> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           OlukoNeumorphicCircleButton(customIcon: const Icon(Icons.arrow_back, color: OlukoColors.grayColor), onPressed: widget.onPressed),
-                          if (widget.actions != null) ...widget.actions else SizedBox.shrink()
+                          if (widget.actions != null) ...widget.actions else const SizedBox.shrink()
                         ],
                       ),
                     )
-                  : SizedBox.shrink(),
+                  : const SizedBox.shrink(),
             ),
           )),
     );

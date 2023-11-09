@@ -154,9 +154,9 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
                       color: OlukoColors.black,
                       lightSource: LightSource.bottomRight,
                       shadowDarkColorEmboss: OlukoColors.black,
-                      shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                      shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
                       surfaceIntensity: 1,
-                      shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                      shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
                       shadowDarkColor: OlukoColors.black),
                   child: IntrinsicHeight(
                     child: ShaderMask(
@@ -384,7 +384,7 @@ class _CoachAssignedCountDownState extends State<CoachAssignedCountDown> {
     return NumberPicker(
       maxValue: maxValue,
       minValue: 0,
-      textStyle: TextStyle(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth, fontSize: 36),
+      textStyle: TextStyle(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight, fontSize: 36),
       selectedTextStyle: TextStyle(color: Colors.white, fontSize: 36),
       onChanged: (int value) {
         setState(() {

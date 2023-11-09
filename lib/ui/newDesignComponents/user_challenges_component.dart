@@ -72,27 +72,16 @@ class _UserChallengeSectionState extends State<UserChallengeSection> {
   }
 
   List<List<Widget>> buildChallengeCards() {
-    List<String> unlockedChallengesListOfIds = [];
-    List<String> lockedChallengesListOfIds = [];
-    List<Widget> _lockedChallenges = [];
-    List<Widget> _unlockedChallenges = [];
-    List<List<Widget>> challengeList = [];
-    widget.challengeState.lockedChallenges.forEach((key, value) {
-      if (value) {
-        unlockedChallengesListOfIds.add(key);
-      } else {
-        lockedChallengesListOfIds.add(key);
-      }
-    });
-
-    for (String id in widget.challengeState.challengeMap.keys) {
-      if (unlockedChallengesListOfIds.contains(id)) {
-        _unlockedChallenges.add(_buildChallengeCard(id));
-      } else {
-        _lockedChallenges.add(_buildChallengeCard(id));
+    final List<Widget> lockedChallenges = [];
+    final List<Widget> unlockedChallenges = [];
+    if (widget.challengeState != null) {
+      for (final entry in widget.challengeState?.lockedChallenges?.entries) {
+        final String challengeId = entry.key;
+        final bool isUnlocked = entry.value;
+        (isUnlocked ? unlockedChallenges : lockedChallenges).add(_buildChallengeCard(challengeId));
       }
     }
-    return challengeList = [_lockedChallenges, _unlockedChallenges];
+    return [lockedChallenges, unlockedChallenges];
   }
 
   ChallengesCard _buildChallengeCard(String id) {

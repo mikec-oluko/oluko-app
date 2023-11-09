@@ -206,16 +206,6 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   @override
   Widget build(BuildContext context) {
     final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-    //TODO: for screen rotation
-    /*if (widget.workoutType == WorkoutType.segmentWithRecording) {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeRight,
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-      ]);
-    }*/
-
     return WillPopScope(
       onWillPop: () async {
         if (await SegmentClocksUtils.onWillPopConfirmationPopup(context, workoutType == WorkoutType.segmentWithRecording)) {
@@ -356,7 +346,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   Widget bottomSection() {
     return Container(
         decoration: BoxDecoration(
-          color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+          color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
           borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
         ),
         height: lowerSectionScreenProportion(true),
@@ -442,31 +432,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         resizeToAvoidBottomInset: false,
         appBar: SegmentClocksUtils.getAppBar(context, setTopBarIcon(), isSegmentWithRecording(), workoutType, resetAMRAPRound, deleteUserProgress),
         backgroundColor: OlukoColors.black,
-        body:
-            //TODO: for screen rotation
-            /*NativeDeviceOrientationReader(builder: (context) {
-          NativeDeviceOrientation orientation = NativeDeviceOrientationReader.orientation(context);
-
-          int turns;
-          switch (orientation) {
-            case NativeDeviceOrientation.landscapeLeft:
-              print("ORIENTATION: landscapeLeft");
-              turns = -1;
-              break;
-            case NativeDeviceOrientation.landscapeRight:
-              print("ORIENTATION: landscapeRight");
-              turns = 1;
-              break;
-            case NativeDeviceOrientation.portraitDown:
-              print("ORIENTATION: portraitDown");
-              turns = 2;
-              break;
-            default:
-              //turns = 0;
-              break;
-          }
-          return*/
-            scaffoldBody());
+        body: scaffoldBody());
   }
 
   Widget scaffoldBody() {
@@ -496,11 +462,10 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
             panel: MovementVideosSection(
                 action: getPlayPauseAction(),
                 segment: widget.segments[widget.segmentIndex],
-                onPressedMovement: (BuildContext context, MovementSubmodel movement) {
+                onPressedMovement: () {
                   if (workState != WorkState.paused) {
-                    changeSegmentState();
+                    changeSegmentState(navigateToMovement: true);
                   }
-                  Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
                 }),
             body: _body(),
           )
@@ -527,7 +492,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
     );
   }
 
-  void changeSegmentState() {
+  void changeSegmentState({bool navigateToMovement = false}) {
     final bool isCurrentTaskTimed = timerEntries[timerTaskIndex].parameter == ParameterEnum.duration;
     setState(() {
       if (isPlaying) {
@@ -551,7 +516,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
         }
         workState = lastWorkStateBeforePause;
         if (isCurrentTaskTimed) {
-          setPaused();
+          if (navigateToMovement) {
+            setPaused();
+          }
           BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
         } else {
           if (alertTimerPlaying) {
@@ -613,7 +580,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
           Positioned(
             bottom: 0,
             child: Container(
-                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
                 height: ScreenUtils.height(context) * 0.14,
                 width: ScreenUtils.width(context),
                 child: SegmentClocksUtils.showButtonsWhenFinished(_recordingPaused ? workoutType : widget.workoutType, shareDone, context, shareDoneAction,
@@ -833,36 +800,21 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
   }
 
   askForRecordSegment() {
-    if (_globalService.videoProcessing) {
-      DialogUtils.getDialog(
-          context,
-          [
-            Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Text(
-                  OlukoLocalizations.get(context, 'videoIsStillProcessing'),
-                  textAlign: TextAlign.center,
-                  style: OlukoFonts.olukoBigFont(customColor: OlukoColors.grayColor),
-                ))
-          ],
-          showExitButton: true);
-    } else {
-      BottomDialogUtils.showBottomDialog(
-        backgroundTapEnable: false,
-        onDismissAction: () => _resume(),
-        context: context,
-        content: CoachRequestContent(
-          name: widget.coach?.firstName ?? '',
-          image: widget.coach?.avatar,
-          onNotRecordingAction: () {
-            Navigator.pop(context);
-            _playTask();
-          },
-          onRecordingAction: navigateToSegmentWithRecording,
-          isNotification: false,
-        ),
-      );
-    }
+    BottomDialogUtils.showBottomDialog(
+      backgroundTapEnable: false,
+      onDismissAction: () => _resume(),
+      context: context,
+      content: CoachRequestContent(
+        name: widget.coach?.firstName ?? '',
+        image: widget.coach?.avatar,
+        onNotRecordingAction: () {
+          Navigator.pop(context);
+          _playTask();
+        },
+        onRecordingAction: navigateToSegmentWithRecording,
+        isNotification: false,
+      ),
+    );
   }
 
   navigateToSegmentWithRecording() {
@@ -1256,7 +1208,9 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   void setPaused() {
     setState(() {
-      lastWorkStateBeforePause = workState;
+      if (workState != WorkState.paused) {
+        lastWorkStateBeforePause = workState;
+      }
       workState = WorkState.paused;
     });
   }
@@ -1370,7 +1324,7 @@ class _SegmentClocksState extends State<SegmentClocks> with WidgetsBindingObserv
 
   void _resume() {
     setState(() {
-      workState = lastWorkStateBeforePause;
+      workState = isCurrentMovementRest() ? WorkState.resting : lastWorkStateBeforePause;
       BlocProvider.of<ClocksTimerBloc>(context).playCountdown(_goToNextStep, setPaused);
       isPlaying = true;
     });

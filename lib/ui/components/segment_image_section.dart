@@ -134,14 +134,17 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     setState(() {
       movementsToDisplayWeight = MovementUtils.getMovementsWithWeights(sections: widget.segment.sections, enrollmentMovements: enrollmentMovements);
     });
-    widget.changeVideoState = () {
-      if (_controller != null) {
-        _controller.pause();
-        setState(() {
-          _isVideoPlaying = !_isVideoPlaying;
-        });
-      }
-    };
+    setState(() {
+      widget.changeVideoState = () {
+        if (_controller != null) {
+          _controller.pause();
+          setState(() {
+            _isVideoPlaying = !_isVideoPlaying;
+          });
+        }
+      };
+    });
+    widget.changeVideoState();
     super.initState();
   }
 
@@ -258,37 +261,6 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     );
   }
 
-  Widget _segmentImageSectionChallenge() {
-    return Stack(
-      children: [
-        _segmentCardComponent(),
-        if (widget.segment.isChallenge && !_isVideoPlaying) challengeButtons(),
-      ],
-    );
-  }
-
-  Widget _classTitleComponent() {
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 20),
-          child: SizedBox(
-            width: ScreenUtils.width(context) - 20,
-            child: Text(
-              _classTitle(),
-              style: _classTitle().length > 25
-                  ? OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold)
-                  : OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  String _classTitle() => widget.courseEnrollment.classes[widget.classIndex].name;
-
   Widget segmentContent() {
     return OlukoNeumorphism.isNeumorphismDesign
         ? segmentInformation()
@@ -322,7 +294,6 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
-              mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
@@ -436,7 +407,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         trimMode: TrimMode.Line,
         trimCollapsedText: OlukoLocalizations.get(context, 'showMore'),
         trimExpandedText: OlukoLocalizations.get(context, 'showLess'),
-        moreStyle: TextStyle(fontSize: 14, color: OlukoColors.primary, fontWeight: FontWeight.bold),
+        moreStyle: const TextStyle(fontSize: 14, color: OlukoColors.primary, fontWeight: FontWeight.bold),
         style: OlukoFonts.olukoMediumFont(
           customColor: OlukoColors.grayColor,
         ),
@@ -465,13 +436,13 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
     return null;
   }
 
-  navigateToSegmentWithRecording() {
+  void navigateToSegmentWithRecording() {
     if (_globalService.videoProcessing) {
       DialogUtils.getDialog(
           context,
           [
             Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
+                padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Text(
                   OlukoLocalizations.get(context, 'videoIsStillProcessing'),
                   textAlign: TextAlign.center,
@@ -597,7 +568,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
 
   Widget videoWidget() {
     return VisibilityDetector(
-      key: Key('videoPlayer'),
+      key: const Key('videoPlayer'),
       onVisibilityChanged: (VisibilityInfo info) {
         if (info.visibleFraction < 0.1 && mounted) {
           closeVideo();
@@ -625,7 +596,7 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
   Widget challengeButtons({bool isForChallenge = false}) {
     return OlukoNeumorphism.isNeumorphismDesign
         ? Padding(
-            padding: isForChallenge ? EdgeInsets.fromLTRB(20, 20, 20, 20) : EdgeInsets.only(left: 20, top: ScreenUtils.height(context) * 0.20),
+            padding: isForChallenge ? const EdgeInsets.all(20) : EdgeInsets.only(left: 20, top: ScreenUtils.height(context) * 0.20),
             child: challengeButtonsContent(),
           )
         : Padding(
@@ -718,16 +689,6 @@ class _SegmentImageSectionState extends State<SegmentImageSection> {
         ],
       ),
     );
-  }
-
-  _onStartPressed() {
-    widget.changeVideoState();
-    //CoachRequest coachRequest = getSegmentCoachRequest(widget.segment.id);
-    if (_coachRequest != null) {
-      showCoachDialog();
-    } else {
-      navigateToSegmentWithoutRecording();
-    }
   }
 }
 

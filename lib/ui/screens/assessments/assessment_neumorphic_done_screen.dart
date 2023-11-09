@@ -39,7 +39,7 @@ class AssessmentNeumorphicDoneScreen extends StatelessWidget {
                           shape: NeumorphicShape.convex,
                           lightSource: LightSource.topLeft,
                           boxShape: NeumorphicBoxShape.circle(),
-                          shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                          shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
                           shadowLightColorEmboss: OlukoColors.black,
                           surfaceIntensity: 1,
                           shadowLightColor: OlukoColors.grayColor,
@@ -101,7 +101,6 @@ class AssessmentNeumorphicDoneScreen extends StatelessWidget {
                     GestureDetector(
                         onTap: () {
                           Navigator.pop(context);
-                          // TODO: UPDATE THE ROUTE
                           Navigator.popAndPushNamed(context, routeLabels[RouteEnum.assessmentVideos],
                               arguments: {'isFirstTime': false, 'isForCoachPage': false});
                         },

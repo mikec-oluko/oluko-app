@@ -125,7 +125,7 @@ class OlukoNeumorphism {
         shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicSearchBarFirstColor,
         shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor,
         surfaceIntensity: 1,
-        shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
         shadowDarkColor: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor,
         oppositeShadowLightSource: true);
   }
@@ -147,12 +147,12 @@ class OlukoNeumorphism {
     return NeumorphicStyle(
         depth: 15,
         intensity: 1,
-        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
         boxShape: const NeumorphicBoxShape.circle(),
-        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
         shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor.withOpacity(0.5),
         surfaceIntensity: 0.4,
-        shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
         shadowDarkColor: OlukoNeumorphismColors.olukoNeumorphicSearchBarSecondColor.withOpacity(0.9));
   }
 
@@ -165,10 +165,10 @@ class OlukoNeumorphism {
         shape: NeumorphicShape.flat,
         lightSource: LightSource.topLeft,
         boxShape: NeumorphicBoxShape.roundRect(BorderRadius.all(Radius.circular(5))),
-        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
         shadowLightColorEmboss: OlukoColors.black,
         surfaceIntensity: 1,
-        shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowLightColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
         shadowDarkColor: Colors.black);
   }
 
@@ -181,7 +181,7 @@ class OlukoNeumorphism {
         shape: NeumorphicShape.flat,
         lightSource: LightSource.topLeft,
         boxShape: NeumorphicBoxShape.roundRect(BorderRadius.all(Radius.circular(5))),
-        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
         shadowLightColorEmboss: OlukoColors.black,
         surfaceIntensity: 1,
         shadowLightColor: OlukoNeumorphismColors.finalGradientColorDark,
@@ -221,10 +221,10 @@ class OlukoNeumorphism {
 
   static NeumorphicStyle getNeumorphicStyleForBorderContainer() {
     return NeumorphicStyle(
-      border: NeumorphicBorder(width: 2, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
+      border: NeumorphicBorder(width: 2, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight),
       depth: -15,
       intensity: 0.7,
-      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
       shape: NeumorphicShape.concave,
       lightSource: LightSource.lerp(LightSource.top, LightSource.bottomRight, 1),
       boxShape: NeumorphicBoxShape.rect(),
@@ -235,10 +235,10 @@ class OlukoNeumorphism {
 
   static NeumorphicStyle getNeumorphicStyleForBottomChat() {
     return NeumorphicStyle(
-      border: NeumorphicBorder(width: 3, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
+      border: NeumorphicBorder(width: 3, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight),
       depth: -4,
       intensity: 0.7,
-      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
       shape: NeumorphicShape.concave,
       lightSource: LightSource.lerp(LightSource.top, LightSource.top, 01),
       shadowDarkColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
@@ -284,7 +284,7 @@ class OlukoNeumorphism {
 }
 
 class OlukoNeumorphismColors {
-  static const Color olukoNeumorphicBackgroundLigth = Color.fromRGBO(43, 47, 52, 1);
+  static const Color olukoNeumorphicBackgroundLight = Color.fromRGBO(43, 47, 52, 1);
   static const Color olukoNeumorphicBackgroundDark = Color.fromRGBO(26, 30, 33, 1);
   static const Color olukoNeumorphicBackgroundDarker = Color.fromRGBO(32, 36, 39, 1);
   static const Color initialGradientColorPrimary = Color.fromRGBO(192, 198, 155, 1);

@@ -47,7 +47,11 @@ class ChallengeSegmentBloc extends Cubit<ChallengeSegmentState> {
         }
       }
       return isNewPR;
-    } catch (e) {
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
       return false;
     }
   }

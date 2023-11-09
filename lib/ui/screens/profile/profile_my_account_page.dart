@@ -284,7 +284,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
       width: MediaQuery.of(context).size.width,
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -319,7 +319,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
 
   Future<void> deleteUserAction() async {
     if (await logOutConfirmationPopUp(context, 'deleteUserConfirmation')) {
-      AppMessages.clearAndShowSnackbarTranslated(context, 'loadingWhithDots');
+      AppMessages.clearAndShowSnackbarTranslated(context, 'loadingWithDots');
       if (await BlocProvider.of<UserInformationBloc>(context).sendDeleteConfirmation(_profileInfo.id)) {
         logOut(userDeleted: true);
       }

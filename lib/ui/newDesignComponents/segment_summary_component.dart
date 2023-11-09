@@ -58,12 +58,12 @@ class SegmentSummaryComponent extends StatefulWidget {
 }
 
 class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
-  bool keyboardVisibilty = false;
-  Map<String, int> movementsWeights = {};
-  List<WorkoutWeight> listOfWeightsToUpdate = [];
-  bool showRecommendation = false;
-  bool segmentHasRecommendations = false;
-  bool segmentHasWeights = false;
+  bool keyboardVisibility = false;
+  Map<String, int> _movementsWeights = {};
+  List<WorkoutWeight> _listOfWeightsToUpdate = [];
+  bool _showRecommendation = false;
+  bool _segmentHasRecommendations = false;
+  bool _segmentHasWeights = false;
   final List<TextEditingController> _listOfControllers = [];
   final List<FocusNode> _listOfNodes = [];
 
@@ -71,9 +71,9 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
   void initState() {
     setState(() {
       if (!widget.addWeightEnable) {
-        segmentHasWeights = segmentUseWeights();
-        segmentHasRecommendations = segmentHasWeightRecommendations();
-        showRecommendation = segmentHasRecommendations;
+        _segmentHasWeights = segmentUseWeights();
+        _segmentHasRecommendations = segmentHasWeightRecommendations();
+        _showRecommendation = _segmentHasRecommendations;
       }
     });
     super.initState();
@@ -99,22 +99,22 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
               physics: OlukoNeumorphism.listViewPhysicsEffect,
               shrinkWrap: true,
               padding: EdgeInsets.zero,
-              itemCount: _segmentSectionAndMovementDetails(showRecommendation).isNotEmpty ? _segmentSectionAndMovementDetails(showRecommendation).length : 1,
-              itemBuilder: (c, i) => _segmentSectionAndMovementDetails(showRecommendation)[i],
+              itemCount: _segmentSectionAndMovementDetails(_showRecommendation).isNotEmpty ? _segmentSectionAndMovementDetails(_showRecommendation).length : 1,
+              itemBuilder: (c, i) => _segmentSectionAndMovementDetails(_showRecommendation)[i],
             ),
           )
         : Column(
             children: [
               weightTabsComponent(context),
               Column(
-                children: _segmentSectionAndMovementDetails(showRecommendation),
+                children: _segmentSectionAndMovementDetails(_showRecommendation),
               ),
             ],
           );
   }
 
   Widget weightTabsComponent(BuildContext context) {
-    if (segmentHasRecommendations && segmentHasWeights) {
+    if (_segmentHasRecommendations && _segmentHasWeights) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Neumorphic(
@@ -129,9 +129,9 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
           ),
         ),
       );
-    } else if (segmentHasWeights && !segmentHasRecommendations) {
+    } else if (_segmentHasWeights && !_segmentHasRecommendations) {
       setState(() {
-        showRecommendation = false;
+        _showRecommendation = false;
       });
       return Container(
         height: 20,
@@ -153,12 +153,12 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          showRecommendation = true;
+          _showRecommendation = true;
         });
       },
       child: Container(
         height: 60,
-        color: showRecommendation ? OlukoColors.primary : OlukoNeumorphismColors.appBackgroundColor,
+        color: _showRecommendation ? OlukoColors.primary : OlukoNeumorphismColors.appBackgroundColor,
         width: (ScreenUtils.width(context)) * 0.35,
         child: Center(
           child: Text(OlukoLocalizations.get(context, 'recommended'),
@@ -172,19 +172,19 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          showRecommendation = false;
+          _showRecommendation = false;
         });
       },
       child: Container(
         height: 60,
         width: (ScreenUtils.width(context) - 100) / 2,
         decoration: BoxDecoration(
-            color: showRecommendation ? OlukoNeumorphismColors.appBackgroundColor : OlukoColors.primaryLight,
+            color: _showRecommendation ? OlukoNeumorphismColors.appBackgroundColor : OlukoColors.primaryLight,
             borderRadius: const BorderRadius.only(topLeft: Radius.circular(50), bottomLeft: Radius.circular(50))),
         child: Center(
           child: Text(OlukoLocalizations.get(context, 'loggedWeight'),
               style: OlukoFonts.olukoMediumFont(
-                  customFontWeight: FontWeight.w500, customColor: showRecommendation ? OlukoColors.white : OlukoNeumorphismColors.appBackgroundColor)),
+                  customFontWeight: FontWeight.w500, customColor: _showRecommendation ? OlukoColors.white : OlukoNeumorphismColors.appBackgroundColor)),
         ),
       ),
     );
@@ -195,7 +195,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     if (widget.enrollmentMovements.isNotEmpty) {
       populateMovements(contentToReturn, showWeightRecommendation);
     }
-    if (listOfWeightsToUpdate.isNotEmpty) {
+    if (_listOfWeightsToUpdate.isNotEmpty) {
       widget.workoutHasWeights(true);
     }
     return contentToReturn;
@@ -263,7 +263,7 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
   }
 
   Widget _movementTileWithInput(
-      MovementSubmodel movement, EnrollmentMovement enrollmentMovement, TextEditingController textController, FocusNode _listOfNodes, int sectionIndex) {
+      MovementSubmodel movement, EnrollmentMovement enrollmentMovement, TextEditingController textController, FocusNode listOfNodes, int sectionIndex) {
     final WorkoutWeight currentMovementAndWeight = _getCurrentMovementAndWeight(movement.id, sectionIndex);
     return WeightTileWithInput(
       movement: movement,
@@ -275,35 +275,6 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
     );
   }
 
-  void _onChangeWeightInputValue(String value, MovementSubmodel movement, WorkoutWeight currentMovementAndWeight) {
-    if (value == '') {
-      movementsWeights[movement.id] = null;
-    } else {
-      if (widget.useImperialSystem) {
-        movementsWeights[movement.id] = int.parse(value);
-      } else {
-        movementsWeights[movement.id] = MovementUtils.lbsToKilogram(int.parse(value));
-      }
-    }
-    currentMovementAndWeight.weight = movementsWeights[movement.id];
-    widget.movementWeights(listOfWeightsToUpdate);
-  }
-
-  void _onSubmitWeightValue(String value, MovementSubmodel movement, WorkoutWeight currentMovementAndWeight) {
-    if (value == '') {
-      movementsWeights[movement.id] = null;
-    } else {
-      if (widget.useImperialSystem) {
-        movementsWeights[movement.id] = int.parse(value);
-      } else {
-        movementsWeights[movement.id] = MovementUtils.lbsToKilogram(int.parse(value));
-      }
-    }
-    currentMovementAndWeight.weight = movementsWeights[movement.id];
-    widget.movementWeights(listOfWeightsToUpdate);
-    FocusManager.instance.primaryFocus?.unfocus();
-  }
-
   void _createNewWeightRecord(SectionSubmodel section, MovementSubmodel movement, EnrollmentMovement enrolledMovement) {
     final WorkoutWeight newWeightHelper = WorkoutWeight(
         classIndex: widget.classIndex,
@@ -313,15 +284,13 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
         movementIndex: getMovementIndex(section, movement),
         setMaxWeight: enrolledMovement.setMaxWeight,
         isPersonalRecord: enrolledMovement.personalRecord);
-    if (!listOfWeightsToUpdate.contains(newWeightHelper)) {
-      listOfWeightsToUpdate.add(newWeightHelper);
+    if (!_listOfWeightsToUpdate.contains(newWeightHelper)) {
+      _listOfWeightsToUpdate.add(newWeightHelper);
     }
   }
 
-  double get _passToKilogramsUnit => 2.20462;
-
   WorkoutWeight _getCurrentMovementAndWeight(String movementId, int sectionIndex) =>
-      listOfWeightsToUpdate.where((weightRecord) => weightRecord.movementId == movementId && weightRecord.sectionIndex == sectionIndex).first;
+      _listOfWeightsToUpdate.where((weightRecord) => weightRecord.movementId == movementId && weightRecord.sectionIndex == sectionIndex).first;
 
   int getMovementIndex(SectionSubmodel section, MovementSubmodel movement) => widget.sectionsFromSegment[getSectionIndex(section)].movements.indexOf(movement);
 
@@ -357,17 +326,17 @@ class _SegmentSummaryComponentState extends State<SegmentSummaryComponent> {
 
   void onSubmit(String movementId, WorkoutWeight currentMovementAndWeight, TextEditingController textEditingController) {
     if (textEditingController.text == '') {
-      movementsWeights[movementId] = null;
+      _movementsWeights[movementId] = null;
     } else {
       if (widget.useImperialSystem) {
-        movementsWeights[movementId] = int.parse(textEditingController.text);
+        _movementsWeights[movementId] = int.parse(textEditingController.text);
       } else {
-        movementsWeights[movementId] = MovementUtils.kilogramToLbs(int.parse(textEditingController.text));
+        _movementsWeights[movementId] = MovementUtils.kilogramToLbs(int.parse(textEditingController.text));
       }
     }
-    currentMovementAndWeight.weight = movementsWeights[movementId];
+    currentMovementAndWeight.weight = _movementsWeights[movementId];
 
-    widget.movementWeights(listOfWeightsToUpdate);
+    widget.movementWeights(_listOfWeightsToUpdate);
   }
 
   bool segmentUseWeights() {

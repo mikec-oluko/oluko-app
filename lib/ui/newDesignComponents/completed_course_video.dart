@@ -14,7 +14,7 @@ import 'package:video_player/video_player.dart';
 import '../../helpers/video_player_helper.dart';
 
 class CompletedCourseVideo extends StatefulWidget {
-  CompletedCourseVideo({Key key, this.mediaURL, this.file, this.isDownloaded}) : super(key: key);
+  const CompletedCourseVideo({Key key, this.mediaURL, this.file, this.isDownloaded}) : super(key: key);
   final String mediaURL;
   final File file;
   final bool isDownloaded;
@@ -25,6 +25,13 @@ class CompletedCourseVideo extends StatefulWidget {
 
 class _CompletedCourseVideoState extends State<CompletedCourseVideo> {
   VideoPlayerController _videoPlayerController;
+
+  @override
+  void dispose() {
+    pauseAndDisposeVideoController();
+    super.dispose();
+  }
+
   Future<ChewieController> getChewieWithVideo(BuildContext context) async {
     if (widget.isDownloaded) {
       _videoPlayerController = VideoPlayerController.file(widget.file);
@@ -44,7 +51,7 @@ class _CompletedCourseVideoState extends State<CompletedCourseVideo> {
       if (_videoPlayerController != null &&
           _videoPlayerController.value != null &&
           _videoPlayerController.value.position == _videoPlayerController.value.duration) {
-        await _videoPlayerController.dispose();
+        await pauseAndDisposeVideoController();
         if (Navigator.canPop(context)) {
           Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.root]));
           Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.root]);
@@ -55,12 +62,19 @@ class _CompletedCourseVideoState extends State<CompletedCourseVideo> {
     return chewieController;
   }
 
+  Future<void> pauseAndDisposeVideoController() async {
+    if (_videoPlayerController != null) {
+      _videoPlayerController.pause();
+      await _videoPlayerController.dispose();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
         if (_videoPlayerController != null) {
-          _videoPlayerController.pause();
+          pauseAndDisposeVideoController();
         }
         return true;
       },
@@ -81,7 +95,7 @@ class _CompletedCourseVideoState extends State<CompletedCourseVideo> {
                 child: GestureDetector(
                   onTap: () async {
                     if (_videoPlayerController != null && Navigator.canPop(context)) {
-                      await _videoPlayerController.dispose();
+                      pauseAndDisposeVideoController();
                       Navigator.popUntil(context, ModalRoute.withName(routeLabels[RouteEnum.root]));
                       Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.root]);
                     }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:oluko_app/blocs/story_list_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
 import 'package:oluko_app/models/movement.dart';
+import 'package:oluko_app/models/submodels/movement_submodel.dart';
+import 'package:oluko_app/routes.dart';
 import 'package:oluko_app/ui/components/movement_item_image.dart';
 import 'package:oluko_app/ui/components/stories_item.dart';
 
@@ -12,8 +14,10 @@ class MovementItemBubblesNeumorphic extends StatefulWidget {
   final bool bubbleName;
   final bool viewDetailsScreen;
   final bool referenceMovementsSection;
+  final bool replaceView;
   final Movement movement;
-  final Function(BuildContext, Movement) onPressed;
+  final MovementSubmodel movementSubmodel;
+  final Function() onPressed;
   MovementItemBubblesNeumorphic(
       {this.content,
       this.width,
@@ -21,7 +25,9 @@ class MovementItemBubblesNeumorphic extends StatefulWidget {
       this.showAsGrid = false,
       this.bubbleName = true,
       this.viewDetailsScreen = false,
+      this.replaceView = false,
       this.movement,
+      this.movementSubmodel,
       this.referenceMovementsSection = false});
   @override
   _MovementItemBubblesNeumorphicState createState() => _MovementItemBubblesNeumorphicState();
@@ -66,7 +72,12 @@ class _MovementItemBubblesNeumorphicState extends State<MovementItemBubblesNeumo
                     context,
                     movement?.image,
                     movement?.name,
-                    onPressed: (context) => widget.onPressed(context, movement),
+                    onPressed: (context) {
+                      if (widget.onPressed != null) widget.onPressed();
+                      widget.replaceView
+                          ? Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': movement})
+                          : Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': widget.movementSubmodel});
+                    },
                     referenceMovementsSection: referenceMovementsSection,
                   )
                 : const SizedBox(),
@@ -91,7 +102,12 @@ class _MovementItemBubblesNeumorphicState extends State<MovementItemBubblesNeumo
                     context,
                     movement?.image,
                     movement?.name,
-                    onPressed: (context) => widget.onPressed(context, movement),
+                    onPressed: (context) {
+                      if (widget.onPressed != null) widget.onPressed();
+                      widget.replaceView
+                          ? Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement})
+                          : Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': widget.movementSubmodel});
+                    },
                     bubbleName: bubbleName,
                   )
                 : const SizedBox(),
@@ -105,6 +121,12 @@ class _MovementItemBubblesNeumorphicState extends State<MovementItemBubblesNeumo
           widget?.movement?.image,
           widget?.movement?.name,
           bubbleName: bubbleName,
+          onPressed: (context) {
+            if (widget.onPressed != null) widget.onPressed();
+            widget.replaceView
+                ? Navigator.pushReplacementNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movement': widget.movement})
+                : Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': widget.movementSubmodel});
+          },
         )
       ];
     }
@@ -123,23 +145,24 @@ class _MovementItemBubblesNeumorphicState extends State<MovementItemBubblesNeumo
   Widget _imageItem(BuildContext context, String imageUrl, String name,
       {Function(BuildContext) onPressed, bool bubbleName = true, bool referenceMovementsSection = false}) {
     return GestureDetector(
-      onTap: () => onPressed(context),
+      onTap: () => onPressed(context) ?? () {},
       child: SizedBox(
         width: 85,
         height: 100,
         child: Column(
           children: [
-            referenceMovementsSection
-                ? Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: MovementItem(maxRadius: 35, imageUrl: imageUrl, referenceMovementsSection: referenceMovementsSection),
-                  )
-                : bubbleName ?? true
-                    ? StoriesItem(maxRadius: 23, imageUrl: imageUrl)
-                    : Padding(
-                        padding: const EdgeInsets.only(left: 5, right: 5),
-                        child: MovementItem(maxRadius: 40, imageUrl: imageUrl),
-                      ),
+            if (referenceMovementsSection)
+              Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: MovementItem(maxRadius: 35, imageUrl: imageUrl, referenceMovementsSection: referenceMovementsSection),
+              )
+            else
+              bubbleName ?? true
+                  ? StoriesItem(maxRadius: 23, imageUrl: imageUrl)
+                  : Padding(
+                      padding: const EdgeInsets.only(left: 5, right: 5),
+                      child: MovementItem(maxRadius: 40, imageUrl: imageUrl),
+                    ),
             Visibility(
               visible: bubbleName ?? true,
               child: Padding(

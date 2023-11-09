@@ -448,7 +448,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       top: OlukoNeumorphism.isNeumorphismDesign ? ScreenUtils.height(context) / 4.5 : ScreenUtils.height(context) / 3.5,
       child: SizedBox(
           width: ScreenUtils.width(context),
-          height: getAdaptativeHeight(),
+          height: getAdaptiveHeight(),
           child: BlocProvider.value(
               value: BlocProvider.of<ProfileBloc>(context),
               child: BlocBuilder<UserStatisticsBloc, UserStatisticsState>(
@@ -703,7 +703,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     }
   }
 
-  double getAdaptativeHeight() {
+  double getAdaptiveHeight() {
     return OlukoNeumorphism.isNeumorphismDesign
         ? ScreenUtils.height(context) < 700
             ? ScreenUtils.height(context) / 2.5
