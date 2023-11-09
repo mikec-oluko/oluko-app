@@ -58,8 +58,13 @@ class MaxWeightsBloc extends Cubit<MaxWeightsState> {
       }
       movements ?? (movements = []);
       emit(MaxWeightsMovements(movements: movements, maxWeightsMap: maxWeightsMap));
-    } catch (exception) {
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
       emit(Failure(exception: exception));
+      rethrow;
     }
   }
 

@@ -144,7 +144,7 @@ class _FriendsPageState extends State<FriendsPage> with SingleTickerProviderStat
           color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark,
           lightSource: LightSource.topLeft,
           shadowDarkColorEmboss: OlukoColors.black,
-          shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+          shadowLightColorEmboss: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
           surfaceIntensity: 1,
           shadowLightColor: Colors.white,
           shadowDarkColor: OlukoColors.black),

@@ -15,8 +15,7 @@ class CoachAssessmentCard extends StatefulWidget {
   final List<TaskSubmission> assessmentVideos;
   final bool isAssessmentTask;
   final bool isForVerticalList;
-  const CoachAssessmentCard(
-      {this.task, this.assessmentVideos, this.introductionVideoDone, this.isAssessmentTask = false, this.isForVerticalList = false});
+  const CoachAssessmentCard({this.task, this.assessmentVideos, this.introductionVideoDone, this.isAssessmentTask = false, this.isForVerticalList = false});
 
   @override
   _CoachAssessmentCardState createState() => _CoachAssessmentCardState();
@@ -25,9 +24,7 @@ class CoachAssessmentCard extends StatefulWidget {
 class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
   @override
   Widget build(BuildContext context) {
-    return OlukoNeumorphism.isNeumorphismDesign
-        ? neumorphicTaskCard(context, isAssessmentTask: widget.isAssessmentTask)
-        : defaultTaskCard(context);
+    return OlukoNeumorphism.isNeumorphismDesign ? neumorphicTaskCard(context, isAssessmentTask: widget.isAssessmentTask) : defaultTaskCard(context);
   }
 
   GestureDetector defaultTaskCard(BuildContext context) {
@@ -131,8 +128,7 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
                 children: [
                   Text(
                     widget.task.name,
-                    style: OlukoFonts.olukoSuperBigFont(
-                        customColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth, customFontWeight: FontWeight.bold),
+                    style: OlukoFonts.olukoSuperBigFont(customColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight, customFontWeight: FontWeight.bold),
                   ),
                   Stack(alignment: Alignment.center, children: [
                     Image.asset(
@@ -158,7 +154,7 @@ class _CoachAssessmentCardState extends State<CoachAssessmentCard> {
                     style: OlukoFonts.olukoBigFont(
                         customColor: checkAssessmentSubmitted(widget.task, widget.assessmentVideos)
                             ? OlukoColors.grayColor
-                            : OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                            : OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
                         customFontWeight: FontWeight.w300),
                   ),
                 ],

@@ -26,16 +26,16 @@ class _OlukoNeumorphicDividerState extends State<OlukoNeumorphicDivider> {
 
   List<Color> get fadeOutColors {
     return [
-      widget.isFadeOut ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth : OlukoColors.grayColorFadeBottom,
-      widget.isFadeOut ? OlukoColors.grayColor : OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
-      widget.isFadeOut ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth : OlukoColors.grayColorFadeBottom
+      widget.isFadeOut ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLight : OlukoColors.grayColorFadeBottom,
+      widget.isFadeOut ? OlukoColors.grayColor : OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
+      widget.isFadeOut ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLight : OlukoColors.grayColorFadeBottom
     ];
   }
 
   List<Color> get fadeOutListDivider {
     return [
       widget.isFadeOut ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.grayColorFadeBottom,
-      widget.isFadeOut ? OlukoColors.grayColor.withOpacity(0.3) : OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+      widget.isFadeOut ? OlukoColors.grayColor.withOpacity(0.3) : OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
       widget.isFadeOut ? OlukoNeumorphismColors.olukoNeumorphicBackgroundDark : OlukoColors.grayColorFadeBottom
     ];
   }

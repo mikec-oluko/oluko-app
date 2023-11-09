@@ -155,7 +155,7 @@ class _State extends State<ShareCard> {
           style: OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth().copyWith(
             lightSource: LightSource.bottom,
             intensity: 1,
-            color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+            color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
             border: NeumorphicBorder(width: 1, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
           ),
           child: Padding(
@@ -220,7 +220,7 @@ class _State extends State<ShareCard> {
             style: OlukoNeumorphism.getNeumorphicStyleForCircleElementNegativeDepth().copyWith(
               lightSource: LightSource.bottom,
               intensity: 1,
-              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
               border: NeumorphicBorder(width: 1, color: OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
             ),
             child: Padding(

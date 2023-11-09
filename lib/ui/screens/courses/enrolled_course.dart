@@ -296,11 +296,11 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                 onPressed: () {
                   if (_disableAction == false) {
                     if (_userState.user.firstAppInteractionAt == null) {
-                      BlocProvider.of<AuthBloc>(context).storeFirstsUserInteraction(userIteraction: UserInteractionEnum.firstAppInteraction);
+                      BlocProvider.of<AuthBloc>(context).storeFirstsUserInteraction(userInteraction: UserInteractionEnum.firstAppInteraction);
                     }
                     BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
                     if (!widget.isCoachRecommendation) {
-                      BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
+                      BlocProvider.of<RecommendationBloc>(context).removeRecommendedCourse(_user.uid, widget.course.id);
                     }
                   }
                   _disableAction = true;
@@ -312,11 +312,11 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
                 onPressed: () {
                   if (_disableAction == false) {
                     if (_userState.user.firstAppInteractionAt == null) {
-                      BlocProvider.of<AuthBloc>(context).storeFirstsUserInteraction(userIteraction: UserInteractionEnum.firstAppInteraction);
+                      BlocProvider.of<AuthBloc>(context).storeFirstsUserInteraction(userInteraction: UserInteractionEnum.firstAppInteraction);
                     }
                     BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
                     if (!widget.isCoachRecommendation) {
-                      BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
+                      BlocProvider.of<RecommendationBloc>(context).removeRecommendedCourse(_user.uid, widget.course.id);
                     }
                   }
                   _disableAction = true;
@@ -375,9 +375,8 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
   Widget buildClassExpansionPanels() {
     return ClassExpansionPanels(
       classes: CourseService.getCourseClasses(_classes, course: widget.course),
-      onPressedMovement: (BuildContext context, MovementSubmodel movement) {
+      onPressedMovement: () {
         widget.playPauseVideo();
-        Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
       },
     );
   }

@@ -13,6 +13,7 @@ class GlobalService with ChangeNotifier {
   bool _showUserLocation;
   bool _showUserLocationOnRegister;
   ConnectivityResult _connectivityType;
+  final String _assessmentId = 'emnsmBgZ13UBRqTS26Qd';
 
   GlobalService._internal() {
     _videoProcessing = false;
@@ -38,6 +39,8 @@ class GlobalService with ChangeNotifier {
   set comesFromCoach(bool value) => _comesFromCoach = value;
 
   bool get hasInternetConnection => _hasInternetConnection;
+
+  String get getAssessmentId => _assessmentId;
 
   set setInternetConnection(bool value) {
     _hasInternetConnection = value;

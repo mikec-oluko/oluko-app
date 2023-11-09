@@ -157,7 +157,7 @@ class _TaskDetailsState extends State<TaskDetails> {
       height: panelSize,
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
       ),
       child: canShowPanel
           ? showPanel()

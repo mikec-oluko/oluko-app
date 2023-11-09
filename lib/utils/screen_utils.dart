@@ -12,7 +12,7 @@ class ScreenUtils {
   static bool bigScreen(BuildContext context) => MediaQuery.of(context).size.height >= 850;
   static bool modifiedFont(BuildContext context) => MediaQuery.of(context).textScaleFactor > 1;
 
-  static double getAdaptativeHeight(BuildContext context) {
+  static double getAdaptiveHeight(BuildContext context) {
     return OlukoNeumorphism.isNeumorphismDesign
         ? ScreenUtils.height(context) < 700
             ? ScreenUtils.height(context) / 2.5

@@ -35,14 +35,21 @@ class ClassSubscriptionBloc extends Cubit<ClassSubscriptionState> {
   }
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>> getStream() {
-    subscription ??= ClassRepository.getClassesSubscription().listen((snapshot) async {
-      List<Class> classes = [];
-      snapshot.docs.forEach((doc) {
-        final Map<String, dynamic> content = doc.data();
-        classes.add(Class.fromJson(content));
-      });
-      emit(ClassSubscriptionSuccess(classes: classes));
+    return subscription ??= ClassRepository.getClassesSubscription().listen((snapshot) async {
+      try {
+        List<Class> classes = [];
+        snapshot.docs.forEach((doc) {
+          final Map<String, dynamic> content = doc.data();
+          classes.add(Class.fromJson(content));
+        });
+        emit(ClassSubscriptionSuccess(classes: classes));
+      } catch (exception, stackTrace) {
+        await Sentry.captureException(
+          exception,
+          stackTrace: stackTrace,
+        );
+        emit(Failure(exception: exception));
+      }
     });
-    return subscription;
   }
 }

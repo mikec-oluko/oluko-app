@@ -179,7 +179,7 @@ class _WelcomeVideoFirstTimeLoginState extends State<WelcomeVideoFirstTimeLogin>
             title: OlukoLocalizations.get(context, 'enrollInACourse'),
             onPressed: () {
               if (_currentUser.firstAppInteractionAt == null) {
-                BlocProvider.of<AuthBloc>(context).storeFirstsUserInteraction(userIteraction: UserInteractionEnum.firstAppInteraction);
+                BlocProvider.of<AuthBloc>(context).storeFirstsUserInteraction(userInteraction: UserInteractionEnum.firstAppInteraction);
               }
               Navigator.popAndPushNamed(
                 context,

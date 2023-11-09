@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/auth_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_assignment_bloc.dart';
+import 'package:oluko_app/blocs/coach/coach_interaction_timeline_bloc.dart';
 import 'package:oluko_app/blocs/coach/coach_mentored_videos_bloc.dart';
 import 'package:oluko_app/blocs/introduction_media_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
@@ -13,6 +14,7 @@ import 'package:oluko_app/models/user_response.dart';
 import 'package:oluko_app/services/global_service.dart';
 import 'package:oluko_app/ui/components/oluko_circular_progress_indicator.dart';
 import 'package:oluko_app/ui/screens/assessments/assessment_videos.dart';
+import 'package:oluko_app/ui/screens/coach/coach_page_builders.dart';
 import 'coach_no_assigned_timer_page.dart';
 import 'coach_no_coach_page.dart';
 import 'coach_page.dart';
@@ -49,6 +51,7 @@ class _CoachMainPageState extends State<CoachMainPage> {
           _currentUser = state.user;
           BlocProvider.of<CoachAssignmentBloc>(context).getCoachAssignmentStatusStream(_currentUser.id);
           BlocProvider.of<IntroductionMediaBloc>(context).getVideo(IntroductionMediaTypeEnum.coachTabCorePlan);
+          BlocProvider.of<CoachTimelineItemsBloc>(context).getStream(_currentUser.id);
         }
         return _currentUser.currentPlan >= 1
             ? BlocBuilder<CoachAssignmentBloc, CoachAssignmentState>(
@@ -64,7 +67,7 @@ class _CoachMainPageState extends State<CoachMainPage> {
                             CoachAssignmentStatusEnum.approved) {
                           BlocProvider.of<IntroductionMediaBloc>(context)
                               .getVideo(IntroductionMediaTypeEnum.coachTabWelcomeVideo, useStreamVideo: GlobalService().appUseVideoHls);
-                          return CoachPage(userId: _currentUser.id, coachId: _coachAssignment.coachId, coachAssignment: _coachAssignment);
+                          return CoachPageBuilders(userId: _currentUser.id, coachId: _coachAssignment.coachId, coachAssignment: _coachAssignment);
                         } else {
                           return CoachAssignedCountDown(
                             currentUser: _currentUser,

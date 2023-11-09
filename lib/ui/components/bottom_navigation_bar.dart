@@ -72,7 +72,7 @@ class _State extends State<OlukoBottomNavigationBar> {
         unselectedItemColor: Colors.white,
         selectedItemColor: OlukoColors.black,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        backgroundColor: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
         selectedFontSize: 0,
         unselectedFontSize: 0,
         onTap: (int index) => this.setState(() {
@@ -95,11 +95,11 @@ class _State extends State<OlukoBottomNavigationBar> {
                 builder: (context, state) {
                   bool chatNotification = state is MessagesNotificationUpdated && state.quantity > 0;
                   bool hasFriendNotification = friendNotification || chatNotification;
-                  bool hasCoachNotification = stateCoachNotification is CoachTabNotification && 
-                  (stateCoachNotification.annotationsNotViewed.isNotEmpty || 
-                  stateCoachNotification.recommendationsNotViewed.isNotEmpty ||
-                  stateCoachNotification.welcomeVideoNotSeen ||
-                  stateCoachNotification.coachVideoMessagesNotViewed.isNotEmpty);
+                  bool hasCoachNotification = stateCoachNotification is CoachTabNotification &&
+                      (stateCoachNotification.annotationsNotViewed.isNotEmpty ||
+                          stateCoachNotification.recommendationsNotViewed.isNotEmpty ||
+                          stateCoachNotification.welcomeVideoNotSeen ||
+                          stateCoachNotification.coachVideoMessagesNotViewed.isNotEmpty);
 
                   return Stack(
                     clipBehavior: Clip.none,
@@ -113,7 +113,7 @@ class _State extends State<OlukoBottomNavigationBar> {
                             : Colors.grey,
                       ),
                       if ((olukoBottomNavigationBarItem.route == RouteEnum.friends && hasFriendNotification) ||
-                      (olukoBottomNavigationBarItem.route == RouteEnum.coach && hasCoachNotification))
+                          (olukoBottomNavigationBarItem.route == RouteEnum.coach && hasCoachNotification))
                         Positioned(
                           top: 0,
                           left: 25,
@@ -128,9 +128,9 @@ class _State extends State<OlukoBottomNavigationBar> {
                         ),
                     ],
                   );
-                }, 
+                },
               );
-            }  else {
+            } else {
               return ImageIcon(
                 AssetImage(olukoBottomNavigationBarItem.selected && olukoBottomNavigationBarItem.selectedAssetImageUrl != null
                     ? olukoBottomNavigationBarItem.selectedAssetImageUrl
@@ -162,7 +162,7 @@ class _State extends State<OlukoBottomNavigationBar> {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+                      color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
                     ),
                     width: blockSize,
                     height: MediaQuery.of(context).orientation == Orientation.portrait ? blockSize : blockSize / 3,

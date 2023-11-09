@@ -284,7 +284,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
       width: MediaQuery.of(context).size.width,
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+        color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),

@@ -411,7 +411,6 @@ class _State extends State<Clock> with WidgetsBindingObserver {
   }
 
   Container neumorphicTextfieldForScore() {
-    //TODO: AJUSTAR EL INPUT
     return Container(
       decoration: const BoxDecoration(color: Colors.transparent),
       height: 65,
@@ -597,7 +596,6 @@ class _State extends State<Clock> with WidgetsBindingObserver {
   }
 
   Widget taskSectionWithoutRecording() {
-    //TODO: DIVIDERS
     final bool hasMultipleLabels = widget.timerEntries[widget.timerTaskIndex].labels.length > 1;
     if (hasMultipleLabels) {
       return SizedBox(

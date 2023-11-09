@@ -28,13 +28,16 @@ class ClassService {
   }
 
   static List<MovementSubmodel> getClassSegmentMovementSubmodels(List<SectionSubmodel> sections) {
-    List<MovementSubmodel> movements = [];
     if (sections == null) {
-      return movements;
+      return [];
     }
+
+    Set<String> uniqueMovementIds = Set<String>();
+    List<MovementSubmodel> movements = [];
+
     for (SectionSubmodel section in sections) {
       for (MovementSubmodel movement in section.movements) {
-        if (!movement.isRestTime && movements.where((savedMomvents) => savedMomvents.id == movement.id).toList().isEmpty) {
+        if (!movement.isRestTime && uniqueMovementIds.add(movement.id)) {
           movements.add(movement);
         }
       }

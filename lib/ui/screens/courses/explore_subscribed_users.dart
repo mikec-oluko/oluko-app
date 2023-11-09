@@ -86,7 +86,7 @@ class _ExploreSubscribedUsersState extends State<ExploreSubscribedUsers> {
               padding: const EdgeInsets.only(bottom: 16.0),
               child: Row(
                 children: [
-                  TitleBody(OlukoLocalizations.get(context, "favorites")),
+                  TitleBody(OlukoLocalizations.get(context, 'favorites')),
                 ],
               ),
             ),

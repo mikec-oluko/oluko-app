@@ -16,11 +16,10 @@ class ClassSegmentSection extends StatefulWidget {
   final List<Movement> movements;
   final List<MovementSubmodel> movementSubmodels;
   final bool showTopDivider;
-  final Function(BuildContext, MovementSubmodel) onPressedMovement;
+  final Function() onPressedMovement;
   final ChallengeNavigation challengeNavigation;
 
   ClassSegmentSection({this.movementSubmodels, this.movements, this.onPressedMovement, this.segment, this.showTopDivider = true, this.challengeNavigation});
-
   @override
   _State createState() => _State();
 }
@@ -70,7 +69,8 @@ class _State extends State<ClassSegmentSection> {
             SingleChildScrollView(
                 physics: OlukoNeumorphism.listViewPhysicsEffect,
                 scrollDirection: Axis.horizontal,
-                child: MovementItemBubbles(onPressed: widget.onPressedMovement, movements: widget.movementSubmodels, width: ScreenUtils.width(context) / 1)),
+                child: MovementItemBubbles(
+                    onPressed: () => widget.onPressedMovement(), movements: widget.movementSubmodels, width: ScreenUtils.width(context) / 1)),
           ],
         ),
         (widget.segment != null && !widget.segment.isChallenge)

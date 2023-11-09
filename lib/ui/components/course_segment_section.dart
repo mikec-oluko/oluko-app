@@ -18,7 +18,7 @@ import 'movement_item_bubbles.dart';
 class CourseSegmentSection extends StatefulWidget {
   final SegmentSubmodel segment;
   final List<MovementSubmodel> movements;
-  final Function(BuildContext, MovementSubmodel) onPressedMovement;
+  final Function() onPressedMovement;
 
   CourseSegmentSection({this.movements, this.onPressedMovement, this.segment});
 

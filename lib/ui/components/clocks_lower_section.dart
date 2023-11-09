@@ -180,7 +180,7 @@ class _State extends State<ClocksLowerSection> {
                     ? ScreenUtils.height(context) / 5.5
                     : ScreenUtils.height(context) / 5,
             width: ScreenUtils.width(context),
-            decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
+            decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight),
             child: SegmentSummaryComponent(
               paddingForInput: const EdgeInsets.symmetric(horizontal: 5),
               segmentIndex: widget.segmentIndex,

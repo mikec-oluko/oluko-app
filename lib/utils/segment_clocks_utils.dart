@@ -495,13 +495,13 @@ class SegmentClocksUtils {
       child: Container(
         height: 100,
         decoration: const BoxDecoration(
-          color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+          color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Center(
             child: Container(
-              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth,
+              color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight,
               height: 50,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,

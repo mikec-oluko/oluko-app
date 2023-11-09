@@ -120,7 +120,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
   bool get checkIfTaskIsLastUpload => _tasks.length - taskSubmissionsCompleted.length == 1;
 
   void _checkLastAssessmentDone(double currentPlan) {
-    currentTaskIsLast = UserUtils.getUserAssesmentsQty(_assessment, currentPlan) - widget.taskIndex == 1;
+    currentTaskIsLast = UserUtils.getUserAssessmentsQty(_assessment, currentPlan) - widget.taskIndex == 1;
   }
 
   createVideo(TaskSubmission taskSubmission, AssessmentAssignment assessmentAssignment, Assessment assessment, bool isLastTask) async {
@@ -198,7 +198,7 @@ class _SelfRecordingPreviewState extends State<SelfRecordingPreview> {
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                     height: 100,
-                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth : OlukoColors.black,
+                    color: OlukoNeumorphism.isNeumorphismDesign ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLight : OlukoColors.black,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [

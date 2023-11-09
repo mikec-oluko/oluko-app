@@ -97,7 +97,7 @@ class _OlukoNeumorphicButtonState extends State<OlukoNeumorphicSecondaryButton> 
           boxShape: NeumorphicBoxShape.stadium(),
           lightShadow: true,
           darkShadow: true,
-        ).copyWith(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth),
+        ).copyWith(color: OlukoNeumorphismColors.olukoNeumorphicBackgroundLight),
         child: Center(
           child: widget.onlyIcon ? widget.icon : _textLabel(),
         ),

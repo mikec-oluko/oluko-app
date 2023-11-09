@@ -77,7 +77,7 @@ class _AudioSentComponentState extends State<AudioSentComponent> {
           boxShape: NeumorphicBoxShape.roundRect(const BorderRadius.all(Radius.circular(10))),
           border: NeumorphicBorder(
               width: 3,
-              color: widget.isPreviewContent ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLigth : OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
+              color: widget.isPreviewContent ? OlukoNeumorphismColors.olukoNeumorphicBackgroundLight : OlukoNeumorphismColors.olukoNeumorphicBackgroundDark),
         ),
         child: Container(
           width: widget.isForList ? ScreenUtils.width(context) : ScreenUtils.width(context) / 1.6,

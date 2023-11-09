@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oluko_app/blocs/personal_record_bloc.dart';
 import 'package:oluko_app/constants/theme.dart';
+import 'package:oluko_app/models/enums/personal_record_param.dart';
 import 'package:oluko_app/models/personal_record.dart';
 import 'package:oluko_app/ui/components/title_body.dart';
 import 'package:oluko_app/utils/oluko_localizations.dart';
@@ -82,7 +83,14 @@ class _ModalPersonalRecordState extends State<ModalPersonalRecord> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(record.value.toString() + " " + SegmentUtils.getParamLabel(record.parameter),
+                        Text(
+                            record.parameter == PersonalRecordParam.duration
+                                ? getRecordDurationForTimeValue(record: record, isDuration: true)
+                                : record.value.toString() +
+                                    " " +
+                                    SegmentUtils.getParamLabel(
+                                      record.parameter,
+                                    ),
                             style: const TextStyle(color: OlukoColors.white, fontSize: 17, fontWeight: FontWeight.w400)),
                         Text(TimeConverter.returnDateOnStringFormat(dateToFormat: record.createdAt, context: context),
                             style: const TextStyle(color: OlukoColors.grayColor, fontSize: 12, fontWeight: FontWeight.w400))
@@ -98,6 +106,20 @@ class _ModalPersonalRecordState extends State<ModalPersonalRecord> {
             ))
         .toList();
     return PRWidgets;
+  }
+
+  String getRecordDurationForTimeValue({PersonalRecord record, bool isDuration = false}) {
+    String valueToReturn = '0';
+    if (isDuration) {
+      if (record.value > 60) {
+        valueToReturn = TimeConverter.secondsToMinutes(record.value.toDouble());
+      } else {
+        valueToReturn = '${record.value} ${SegmentUtils.getParamLabel(
+          record.parameter,
+        )}';
+      }
+    }
+    return valueToReturn;
   }
 
   Widget getPRImage(PersonalRecord record) {

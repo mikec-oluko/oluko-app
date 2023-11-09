@@ -92,7 +92,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
     BlocProvider.of<StatisticsSubscriptionBloc>(context).getStream();
     BlocProvider.of<ClassSubscriptionBloc>(context).getStream();
     BlocProvider.of<VideoBloc>(context).getAspectRatio(widget.course.video);
-    _scrollCotrollerInit();
+    _scrollControllerInit();
     _videoPlayerActions();
     _courseLiked = false;
   }
@@ -118,7 +118,6 @@ class _CourseMarketingState extends State<CourseMarketing> {
           _userState = authState;
           BlocProvider.of<SubscribedCourseUsersBloc>(context).get(widget.course.id, _userState.user.id);
         }
-        // BlocProvider.of<CourseUserIteractionBloc>(context).isCourseLiked(courseId: widget.course.id, userId: _userState.user.id);
         return form();
       } else {
         return const SizedBox.shrink();
@@ -154,10 +153,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
         if (classState is ClassSubscriptionSuccess) {
           _classes = classState.classes;
           _allCourseClasses = CourseService.getCourseClasses(_classes, course: widget.course);
-          _getMoreClasses();
-          return Form(
-              key: _formKey,
-              child: Scaffold(body: OlukoNeumorphism.isNeumorphismDesign ? neumorphicMarketingView(enrollmentState) : defaultMarketingView(context)));
+          getFirstChunk();
+          return Form(key: _formKey, child: Scaffold(body: neumorphicMarketingView(enrollmentState)));
         } else {
           return nil;
         }
@@ -165,170 +162,136 @@ class _CourseMarketingState extends State<CourseMarketing> {
     });
   }
 
-  Container defaultMarketingView(BuildContext context) {
-    return Container(
-        color: OlukoColors.black,
-        child: Stack(
-          children: [
-            ListView(physics: OlukoNeumorphism.listViewPhysicsEffect, addAutomaticKeepAlives: false, addRepaintBoundaries: false, children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 3),
-                child: OverlayVideoPreview(
-                    image: widget.course.image,
-                    video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: widget.course.videoHls, videoUrl: widget.course.video),
-                    showBackButton: true,
-                    showHeartButton: true,
-                    showShareButton: true,
-                    onBackPressed: () => Navigator.pop(context)),
-              ),
-              showEnrollButton(context),
-              Padding(
-                  padding: const EdgeInsets.only(right: 15, left: 15, top: 0),
-                  child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Text(
-                          widget.course.name,
-                          style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0, right: 10),
-                          child: Text(
-                            //TODO: change weeks number
-                            CourseUtils.toCourseDuration(
-                                int.tryParse(widget.course.duration) ?? 0, widget.course.classes != null ? widget.course.classes.length : 0, context),
-                            style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
-                          ),
-                        ),
-                        buildStatistics(),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0, right: 10),
-                          child: Text(
-                            widget.course.description ?? '',
-                            style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
-                          ),
-                        ),
-                        if (!OlukoNeumorphism.isNeumorphismDesign)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 25.0),
-                            child: Text(
-                              OlukoLocalizations.get(context, 'classes'),
-                              style: OlukoFonts.olukoSubtitleFont(customFontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        buildClassExpansionPanels()
-                      ]))),
-              SizedBox(
-                height: 150,
-              )
-            ]),
-          ],
-        ));
-  }
-
   Widget neumorphicMarketingView(CourseEnrollmentState courseEnrollmentState) {
     return Container(
       color: OlukoNeumorphismColors.finalGradientColorDark,
       child: CustomScrollView(
-        physics: const ClampingScrollPhysics(),
+        physics: OlukoNeumorphism.listViewPhysicsEffect,
         controller: _scrollController,
         slivers: [
           SliverStack(positionedAlignment: Alignment.bottomRight, children: [
-            SliverPersistentHeader(
-                pinned: true,
-                delegate: SliverAppBarDelegate(ScreenUtils.height(context) * 0.18, ScreenUtils.height(context) * 0.18,
-                    child: Container(
-                      alignment: Alignment.bottomCenter,
-                      color: OlukoNeumorphismColors.finalGradientColorDark,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: OlukoNeumorphicDivider(
-                          isFadeOut: true,
-                        ),
-                      ),
-                    ))),
-            SliverToBoxAdapter(
-              child: OlukoVideoPreview(
-                image: widget.course.posterImage ?? widget.course.image,
-                video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: widget.course.videoHls, videoUrl: widget.course.video),
-                onBackPressed: () => Navigator.pop(context),
-                onPlay: () => widget.isVideoPlaying(),
-                videoVisibilty: _isVideoPlaying,
-                bottomWidgets: [
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                      child: Text(
-                        widget.course.name,
-                        style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    child: Text(
-                      CourseUtils.toCourseDuration(
-                          int.tryParse(widget.course.duration) ?? 0, widget.course.classes != null ? widget.course.classes.length : 0, context),
-                      style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SliverPersistentHeader(
-                pinned: true,
-                delegate: SliverAppBarDelegate(
-                  ScreenUtils.height(context) * 0.18,
-                  ScreenUtils.height(context) * 0.18,
-                  child: topButtons(() => Navigator.pop(context), _isVideoPlaying),
-                )),
+            _persistentDividerComponent(),
+            _courseVideoTitleAndDurationSection(),
+            _topButtonsSection(),
           ]),
-          SliverVisibility(
-            visible: !isCourseEnrolled,
-            sliver: SliverPersistentHeader(
-                pinned: true,
-                delegate: SliverAppBarDelegate(
-                  ScreenUtils.height(context) * 0.12,
-                  ScreenUtils.height(context) * 0.12,
-                  child: Container(color: OlukoNeumorphismColors.finalGradientColorDark, child: showEnrollButton(context)),
-                )),
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate([
-              Padding(
-                padding: const EdgeInsets.only(right: 15, left: 15),
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  child: ListView(
-                    physics: OlukoNeumorphism.listViewPhysicsEffect,
-                    padding: EdgeInsets.zero,
-                    addAutomaticKeepAlives: false,
-                    addRepaintBoundaries: false,
-                    shrinkWrap: true,
-                    primary: false,
-                    children: [
-                      buildStatistics(),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10.0, right: 10),
-                        child: Text(
-                          widget.course.description ?? '',
-                          style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20.0, bottom: 15),
-                        child: OlukoNeumorphicDivider(),
-                      ),
-                      buildClassExpansionPanels()
-                    ],
-                  ),
+          _enrollButtonSection(),
+          _courseContentSection(),
+        ],
+      ),
+    );
+  }
+
+  SliverPersistentHeader _persistentDividerComponent() {
+    return SliverPersistentHeader(
+        pinned: true,
+        delegate: SliverAppBarDelegate(ScreenUtils.height(context) * 0.18, ScreenUtils.height(context) * 0.18,
+            child: Container(
+              alignment: Alignment.bottomCenter,
+              color: OlukoNeumorphismColors.finalGradientColorDark,
+              child: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.0),
+                child: OlukoNeumorphicDivider(
+                  isFadeOut: true,
                 ),
               ),
-              const SizedBox(
-                height: 150,
-              )
-            ]),
+            )));
+  }
+
+  SliverList _courseContentSection() {
+    return SliverList(
+      delegate: SliverChildListDelegate([
+        Padding(
+          padding: const EdgeInsets.only(right: 15, left: 15),
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            child: ListView.builder(
+              itemCount: 1,
+              physics: OlukoNeumorphism.listViewPhysicsEffect,
+              padding: EdgeInsets.zero,
+              addAutomaticKeepAlives: false,
+              addRepaintBoundaries: false,
+              shrinkWrap: true,
+              primary: false,
+              itemBuilder: (BuildContext context, int index) {
+                return Column(children: [
+                  buildStatistics(),
+                  _courseDescriptionSection(),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 20.0, bottom: 15),
+                    child: OlukoNeumorphicDivider(),
+                  ),
+                  buildClassExpansionPanels()
+                ]);
+              },
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 150,
+        )
+      ]),
+    );
+  }
+
+  Padding _courseDescriptionSection() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10.0, right: 10),
+      child: Text(
+        widget.course.description ?? '',
+        style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+      ),
+    );
+  }
+
+  SliverVisibility _enrollButtonSection() {
+    return SliverVisibility(
+      visible: !isCourseEnrolled,
+      sliver: SliverPersistentHeader(
+          pinned: true,
+          delegate: SliverAppBarDelegate(
+            ScreenUtils.height(context) * 0.12,
+            ScreenUtils.height(context) * 0.12,
+            child: Container(color: OlukoNeumorphismColors.finalGradientColorDark, child: showEnrollButton(context)),
+          )),
+    );
+  }
+
+  SliverPersistentHeader _topButtonsSection() {
+    return SliverPersistentHeader(
+        pinned: true,
+        delegate: SliverAppBarDelegate(
+          ScreenUtils.height(context) * 0.18,
+          ScreenUtils.height(context) * 0.18,
+          child: topButtons(() => Navigator.pop(context), _isVideoPlaying),
+        ));
+  }
+
+  SliverToBoxAdapter _courseVideoTitleAndDurationSection() {
+    return SliverToBoxAdapter(
+      child: OlukoVideoPreview(
+        image: widget.course.posterImage ?? widget.course.image,
+        video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: widget.course.videoHls, videoUrl: widget.course.video),
+        onBackPressed: () => Navigator.pop(context),
+        onPlay: () => widget.isVideoPlaying(),
+        videoVisibilty: _isVideoPlaying,
+        bottomWidgets: [
+          Container(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: Text(
+                widget.course.name,
+                style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Text(
+              CourseUtils.toCourseDuration(
+                  int.tryParse(widget.course.duration) ?? 0, widget.course.classes != null ? widget.course.classes.length : 0, context),
+              style: OlukoFonts.olukoBigFont(customFontWeight: FontWeight.normal, customColor: OlukoColors.grayColor),
+            ),
           ),
         ],
       ),
@@ -340,7 +303,6 @@ class _CourseMarketingState extends State<CourseMarketing> {
       return Padding(
         padding: EdgeInsets.symmetric(vertical: ScreenUtils.height(context) * 0.02, horizontal: 15),
         child: Row(
-          mainAxisSize: MainAxisSize.max,
           children: [
             if (OlukoNeumorphism.isNeumorphismDesign)
               OlukoNeumorphicPrimaryButton(
@@ -399,11 +361,11 @@ class _CourseMarketingState extends State<CourseMarketing> {
   Future<void> enrollAction(BuildContext context) async {
     if (_disableAction == false) {
       if (_userState.user.firstAppInteractionAt == null) {
-        BlocProvider.of<AuthBloc>(context).storeFirstsUserInteraction(userIteraction: UserInteractionEnum.firstAppInteraction);
+        BlocProvider.of<AuthBloc>(context).storeFirstsUserInteraction(userInteraction: UserInteractionEnum.firstAppInteraction);
       }
       BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
       if (!widget.isCoachRecommendation) {
-        BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
+        BlocProvider.of<RecommendationBloc>(context).removeRecommendedCourse(_user.uid, widget.course.id);
       }
     }
     _setDisableUnrollAction();
@@ -417,9 +379,8 @@ class _CourseMarketingState extends State<CourseMarketing> {
 
   Widget enrollButton() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
       child: Row(
-        mainAxisSize: MainAxisSize.max,
         children: [
           if (OlukoNeumorphism.isNeumorphismDesign)
             OlukoNeumorphicPrimaryButton(
@@ -428,12 +389,12 @@ class _CourseMarketingState extends State<CourseMarketing> {
               onPressed: () {
                 if (_disableAction == false) {
                   if (_userState.user.firstAppInteractionAt == null) {
-                    BlocProvider.of<AuthBloc>(context).storeFirstsUserInteraction(userIteraction: UserInteractionEnum.firstAppInteraction);
+                    BlocProvider.of<AuthBloc>(context).storeFirstsUserInteraction(userInteraction: UserInteractionEnum.firstAppInteraction);
                   }
                   BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
 
                   if (!widget.isCoachRecommendation) {
-                    BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
+                    BlocProvider.of<RecommendationBloc>(context).removeRecommendedCourse(_user.uid, widget.course.id);
                   }
                 }
                 _setDisableUnrollAction();
@@ -445,11 +406,11 @@ class _CourseMarketingState extends State<CourseMarketing> {
               onPressed: () {
                 if (_disableAction == false) {
                   if (_userState.user.firstAppInteractionAt == null) {
-                    BlocProvider.of<AuthBloc>(context).storeFirstsUserInteraction(userIteraction: UserInteractionEnum.firstAppInteraction);
+                    BlocProvider.of<AuthBloc>(context).storeFirstsUserInteraction(userInteraction: UserInteractionEnum.firstAppInteraction);
                   }
                   BlocProvider.of<CourseEnrollmentBloc>(context).create(_user, widget.course);
                   if (!widget.isCoachRecommendation) {
-                    BlocProvider.of<RecommendationBloc>(context).removeRecomendedCourse(_user.uid, widget.course.id);
+                    BlocProvider.of<RecommendationBloc>(context).removeRecommendedCourse(_user.uid, widget.course.id);
                   }
                 }
                 _setDisableUnrollAction();
@@ -467,7 +428,7 @@ class _CourseMarketingState extends State<CourseMarketing> {
 
         final CourseStatistics courseStatistic = courseStatistics.isNotEmpty ? courseStatistics[0] : null;
         return Padding(
-            padding: EdgeInsets.symmetric(vertical: 15),
+            padding: const EdgeInsets.symmetric(vertical: 15),
             child: StatisticChart(
               courseStatistics: courseStatistic,
               course: widget.course,
@@ -477,15 +438,15 @@ class _CourseMarketingState extends State<CourseMarketing> {
         return Padding(
           padding: const EdgeInsets.all(50.0),
           child: Center(
-            child: Text(OlukoLocalizations.get(context, 'loadingWhithDots'),
-                style: TextStyle(
+            child: Text(OlukoLocalizations.get(context, 'loadingWithDots'),
+                style: const TextStyle(
                   color: Colors.white,
                 )),
           ),
         );
       } else {
-        return Padding(
-            padding: const EdgeInsets.all(50.0),
+        return const Padding(
+            padding: EdgeInsets.all(50.0),
             child: Center(
               child: Text('error',
                   style: TextStyle(
@@ -501,34 +462,12 @@ class _CourseMarketingState extends State<CourseMarketing> {
       screenController: _scrollController,
       totalClasses: _allCourseClasses.length,
       classes: _growingClassList,
-      onPressedMovement: (BuildContext context, MovementSubmodel movement) {
+      onPressedMovement: () {
         if (widget.closeVideo != null) {
           widget.closeVideo();
         }
-        Navigator.pushNamed(context, routeLabels[RouteEnum.movementIntro], arguments: {'movementSubmodel': movement});
       },
     );
-  }
-
-  _peopleAction(List<dynamic> users, List<dynamic> favorites, BuildContext context) {
-    BottomDialogUtils.showBottomDialog(
-        context: context,
-        content: SizedBox(
-          height: ScreenUtils.height(context) * 0.5,
-          child: ModalPeopleEnrolled(
-            userId: _user.uid,
-            users: users,
-            favorites: favorites,
-            userProgressListBloc: BlocProvider.of<UserProgressListBloc>(context),
-            blocFavoriteFriend: BlocProvider.of<FavoriteFriendBloc>(context),
-            blocFriends: BlocProvider.of<FriendBloc>(context),
-            blocHifiveReceived: BlocProvider.of<HiFiveReceivedBloc>(context),
-            blocPointsCard: BlocProvider.of<PointsCardBloc>(context),
-            blocHifiveSend: BlocProvider.of<HiFiveSendBloc>(context),
-            blocUserStatistics: BlocProvider.of<UserStatisticsBloc>(context),
-            friendRequestBloc: BlocProvider.of<FriendRequestBloc>(context),
-          ),
-        ));
   }
 
   Widget topButtons(Function() onBackPressed, bool _isVideoPlaying) {
@@ -542,10 +481,10 @@ class _CourseMarketingState extends State<CourseMarketing> {
           if (_isVideoPlaying)
             const SizedBox()
           else
-            BlocBuilder<CourseUserIteractionBloc, CourseUserInteractionState>(
+            BlocBuilder<CourseUserInteractionBloc, CourseUserInteractionState>(
               builder: (context, state) {
                 if (state is CourseLikedSuccess) {
-                  _courseLiked = state.courseLiked != null ? state.courseLiked.isActive : false;
+                  _courseLiked = state.courseLiked?.isActive ?? false;
                   _isSavingLikedCourse = false;
                 }
                 return topButtonsBackground(Image.asset(_courseLiked ? 'assets/courses/heart.png' : 'assets/courses/grey_heart_outlined.png', scale: 3.5),
@@ -607,32 +546,45 @@ class _CourseMarketingState extends State<CourseMarketing> {
       setState(() {
         _courseLiked = !_courseLiked;
       });
-      BlocProvider.of<CourseUserIteractionBloc>(context).updateCourseLikeValue(userId: _userState.user.id, courseId: widget.course.id);
+      BlocProvider.of<CourseUserInteractionBloc>(context).updateCourseLikeValue(userId: _userState.user.id, courseId: widget.course.id);
     }
     setState(() {
       _isSavingLikedCourse = true;
     });
   }
 
-  void _scrollCotrollerInit() {
+  void _scrollControllerInit() {
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels > _pixelsToReload * 0.85) {
+      if (_scrollController.position.atEdge) {
         if (_growingClassList.length != _allCourseClasses.length) {
-          _getMoreClasses();
-          _pixelsToReload += _scrollController.position.extentInside;
-          setState(() {});
+          setState(() {
+            _getMoreClasses();
+            _pixelsToReload += _scrollController.position.extentInside;
+          });
         }
       }
     });
   }
 
-  void _getMoreClasses() => _growingClassList = _allCourseClasses.isNotEmpty
-      ? [
-          ..._allCourseClasses.getRange(
-              0,
-              _allCourseClasses.length > _growingClassList.length + _batchClassMaxRange
-                  ? _growingClassList.length + _batchClassMaxRange
-                  : _allCourseClasses.length)
-        ]
-      : [];
+  void _getMoreClasses() {
+    int remainingClasses = _allCourseClasses.length - _growingClassList.length;
+
+    if (remainingClasses > 0) {
+      int batchSize = remainingClasses >= _batchClassMaxRange ? _batchClassMaxRange : remainingClasses;
+
+      List<Class> newClasses = _allCourseClasses.getRange(_growingClassList.length, _growingClassList.length + batchSize).toList();
+
+      setState(() {
+        _growingClassList.addAll(newClasses);
+      });
+    }
+  }
+
+  void getFirstChunk() {
+    if (_allCourseClasses.isNotEmpty) {
+      if (_growingClassList.isEmpty && (_batchClassMaxRange <= _allCourseClasses.length)) {
+        _growingClassList = _allCourseClasses.getRange(0, _batchClassMaxRange).toList();
+      }
+    }
+  }
 }
