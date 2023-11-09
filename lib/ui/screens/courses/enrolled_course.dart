@@ -348,7 +348,7 @@ class _EnrolledCourseState extends State<EnrolledCourse> {
             padding: const EdgeInsets.all(50.0),
             child: Center(
               child: Text(
-                OlukoLocalizations.get(context, 'loadingWhithDots'),
+                OlukoLocalizations.get(context, 'loadingWithDots'),
                 style: const TextStyle(
                   color: Colors.white,
                 ),

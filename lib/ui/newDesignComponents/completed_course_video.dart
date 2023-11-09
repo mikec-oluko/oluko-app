@@ -63,8 +63,10 @@ class _CompletedCourseVideoState extends State<CompletedCourseVideo> {
   }
 
   Future<void> pauseAndDisposeVideoController() async {
-    if (_videoPlayerController != null) _videoPlayerController.pause();
-    if (_videoPlayerController != null) await _videoPlayerController.dispose();
+    if (_videoPlayerController != null) {
+      _videoPlayerController.pause();
+      await _videoPlayerController.dispose();
+    }
   }
 
   @override

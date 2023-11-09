@@ -319,7 +319,7 @@ class _ProfileMyAccountPageState extends State<ProfileMyAccountPage> {
 
   Future<void> deleteUserAction() async {
     if (await logOutConfirmationPopUp(context, 'deleteUserConfirmation')) {
-      AppMessages.clearAndShowSnackbarTranslated(context, 'loadingWhithDots');
+      AppMessages.clearAndShowSnackbarTranslated(context, 'loadingWithDots');
       if (await BlocProvider.of<UserInformationBloc>(context).sendDeleteConfirmation(_profileInfo.id)) {
         logOut(userDeleted: true);
       }

@@ -433,7 +433,6 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
                   classes: classState.classes,
                   courseIndex: currentUser,
                   closeVideo: closeVideo,
-                  //TODO: HERE
                   onPressed: () => Future.delayed(const Duration(milliseconds: 500), () {
                     BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, widgetIndex: currentUser);
                   }),

@@ -100,7 +100,7 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
 
   List<Widget> generateFriendRequestsList(FriendRequestState friendsRequestState) {
     if (friendsRequestState is GetFriendRequestsSuccess) {
-      return friendsRequestState.friendRequestList.isEmpty
+      return friendsRequestState?.friendRequestList == null || friendsRequestState.friendRequestList.isEmpty
           ? [
               Padding(
                 padding: const EdgeInsets.all(32.0),

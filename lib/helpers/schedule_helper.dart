@@ -12,21 +12,23 @@ import 'package:oluko_app/routes.dart';
 class ScheduleHelper {
   static Future<void> navigateToCourseSelectedScheduledClass(
       BuildContext context, WorkoutSchedule workoutSchedule, List<CourseEnrollment> courseEnrollmentList, List<Course> courses) async {
-    final DocumentSnapshot courseSnapshot = await workoutSchedule.courseEnrollment.course.reference.get();
-    final Course selectedCourse = Course.fromJson(courseSnapshot.data() as Map<String, dynamic>);
-    final courseIndex = courses.indexWhere((course) => course.id == selectedCourse.id);
-    final courseEnrollmentIndex = courseEnrollmentList.indexWhere((courseEnrollment) => courseEnrollment.id == workoutSchedule.courseEnrollment.id);
+    if (workoutSchedule.courseEnrollment?.course?.reference != null) {
+      final DocumentSnapshot courseSnapshot = await workoutSchedule.courseEnrollment?.course?.reference?.get();
+      final Course selectedCourse = Course.fromJson(courseSnapshot.data() as Map<String, dynamic>);
+      final courseIndex = courses.indexWhere((course) => course.id == selectedCourse.id);
+      final courseEnrollmentIndex = courseEnrollmentList.indexWhere((courseEnrollment) => courseEnrollment.id == workoutSchedule.courseEnrollment.id);
 
-    Navigator.pushNamed(
-      context,
-      routeLabels[RouteEnum.insideClass],
-      arguments: {
-        'courseEnrollment': courseEnrollmentList[courseEnrollmentIndex],
-        'classIndex': workoutSchedule.classIndex,
-        'courseIndex': courseIndex,
-        'actualCourse': selectedCourse
-      },
-    );
+      Navigator.pushNamed(
+        context,
+        routeLabels[RouteEnum.insideClass],
+        arguments: {
+          'courseEnrollment': courseEnrollmentList[courseEnrollmentIndex],
+          'classIndex': workoutSchedule.classIndex,
+          'courseIndex': courseIndex,
+          'actualCourse': selectedCourse
+        },
+      );
+    }
   }
 
   static Future<void> goToEditSchedule(BuildContext context, WorkoutSchedule workoutSchedule, AuthSuccess authState, UserResponse currentUserLatestVersion,

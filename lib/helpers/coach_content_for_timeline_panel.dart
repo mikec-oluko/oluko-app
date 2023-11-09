@@ -334,7 +334,7 @@ class CoachTimelineFunctions {
 
   static List<CoachTimelineItem> coachRecommendationsTimelineItems(List<CoachRecommendationDefault> coachRecommendationList) {
     List<CoachTimelineItem> _coachRecommendationTimelineContent = [];
-    if (coachRecommendationList.isNotEmpty) {
+    if (coachRecommendationList != null && coachRecommendationList.isNotEmpty) {
       coachRecommendationList.forEach((coachRecommendation) {
         final newRecommendationForTimeline = createAnCoachTimelineItem(recommendationItem: coachRecommendation);
         if (!_coachRecommendationTimelineContent.contains(newRecommendationForTimeline)) {

@@ -40,7 +40,7 @@ class RecommendationBloc extends Cubit<RecommendationState> {
 
   void removeRecommendedCourse(String userId, String courseId) {
     try {
-      RecommendationRepository().removeRecomendedCourse(userId, courseId);
+      RecommendationRepository().removeRecommendedCourse(userId, courseId);
     } catch (e) {
       return;
     }
