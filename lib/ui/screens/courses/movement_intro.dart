@@ -40,9 +40,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
 
   //Controllers
   TabController tabController;
-
   ChewieController videoController;
-  // List<ChewieController> _videoControllers = [null];
   List<Key> _videoKeys = [GlobalKey()];
   MovementInfoSuccess _movementInfoSuccess;
   MovementSubmodel _movementSubmodel;
