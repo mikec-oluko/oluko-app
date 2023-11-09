@@ -461,43 +461,4 @@ class _State extends State<Courses> {
       return [];
     }
   }
-
-//   List<Widget> _getLikedCoursesList(Map<CourseCategory, List<Course>> myListOfCourses) {
-//     if (myListOfCourses.values.toList().isNotEmpty) {
-//       return myListOfCourses.values.toList().first.map((courseElement) {
-//         return Padding(
-//           padding: const EdgeInsets.only(right: 8.0),
-//           child: GestureDetector(
-//             onTap: () async {
-//               Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-//                   arguments: {'course': courseElement, 'fromCoach': false, 'isCoachRecommendation': false});
-//             },
-//             child: _getCourseCard(
-//               CourseUtils.generateImageCourse(courseElement.image, context),
-//               width: ScreenUtils.width(context) / (padding + _cardsToShow()),
-//             ),
-//           ),
-//         );
-//       }).toList();
-//     } else {
-//       return [];
-//     }
-//   }
-
-//   List<Widget> _getFriendsRecommendedCoursesList(List<Map<String, List<UserResponse>>> coursesRecommendedMap) {
-//     return coursesRecommendedMap.map((Map<String, List<UserResponse>> courseRecommendedMapEntry) {
-//       Course courseRecommended = CourseUtils.getCourseById(courseRecommendedMapEntry.keys.first, _courses);
-//       return Padding(
-//         padding: OlukoNeumorphism.isNeumorphismDesign ? const EdgeInsets.symmetric(vertical: 10, horizontal: 5) : const EdgeInsets.all(8.0),
-//         child: GestureDetector(
-//           onTap: () => Navigator.pushNamed(context, routeLabels[RouteEnum.courseMarketing],
-//               arguments: {'course': courseRecommended, 'fromCoach': false, 'isCoachRecommendation': false}),
-//           child: _getCourseCard(CourseUtils.generateImageCourse(courseRecommended.image, context),
-//               width: ScreenUtils.width(context) / (padding + _cardsToShow()),
-//               userRecommendations: courseRecommendedMapEntry.values.first,
-//               friendRecommended: true),
-//         ),
-//       );
-//     }).toList();
-//   }
 }

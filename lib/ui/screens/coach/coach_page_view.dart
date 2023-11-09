@@ -209,7 +209,7 @@ class _CoachPageViewState extends State<CoachPageView> {
 
   Widget _getMentoredVideosSection() => CoachHelperFunctions.getMentoredVideos(context, _annotationVideosList, widget.currentAuthUser);
 
-  Widget _getSentVideosSection() => CoachHelperFunctions.getSendVideos(
+  Widget _getSentVideosSection() => CoachHelperFunctions.getSentVideos(
         context,
         _sentVideosList,
       );

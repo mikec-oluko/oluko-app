@@ -61,9 +61,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
 
   @override
   void dispose() {
-    // _videoControllers.forEach((controller) {
-    //   controller?.dispose();
-    // });
+    videoController?.dispose();
     super.dispose();
   }
 
@@ -95,7 +93,6 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
             movementInfoState.movementVariants.forEach((element) {
               tabs.add(element.name);
               _videoKeys.add(GlobalKey());
-              // _videoControllers.add(null);
             });
             tabController = TabController(length: tabs.length, vsync: this);
             currentTabs = _getTabs();
@@ -126,12 +123,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                                       child: TabBar(
                                         isScrollable: true,
                                         onTap: (index) => setState(() {
-                                          // setState(() {
                                           tabController.index = index;
-                                          // if (_videoControllers[tabController.index] != null) {
-                                          //   _videoControllers[tabController.index].pause();
-                                          // }
-                                          // });
                                         }),
                                         controller: tabController,
                                         indicatorSize: TabBarIndicatorSize.label,
@@ -182,9 +174,6 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
               children: [
                 GestureDetector(
                   onTap: () {
-                    // if (_videoControllers[tabController.index] != null) {
-                    //   _videoControllers[tabController.index].pause();
-                    // }
                     Navigator.pushNamed(
                       context,
                       routeLabels[RouteEnum.courseMarketing],
@@ -206,7 +195,6 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
   }
 
   List<Widget> _videoPlayer(String videoUrl, int index) {
-    _clearUnusedVideoControllers(index);
     return [
       OlukoVideoPlayer(
         key: _videoKeys[index],
@@ -214,19 +202,9 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
         autoPlay: false,
         whenInitialized: (ChewieController chewieController) => setState(() {
           videoController = chewieController;
-          // _videoControllers[index] = chewieController;
         }),
       ),
-      // if (_videoControllers[index] == null) const Center(child: CircularProgressIndicator())
     ];
-  }
-
-  _clearUnusedVideoControllers(num currentIndex) {
-    // for (var i = 0; i < _videoControllers.length; i++) {
-    //   if (i != currentIndex && _videoControllers[i] != null) {
-    //     _videoControllers[i] = null;
-    //   }
-    // }
   }
 
   Widget _firstTab(Movement movement) {
@@ -275,11 +253,7 @@ class _MovementIntroState extends State<MovementIntro> with TickerProviderStateM
                         movementSubmodel: _movementSubmodel,
                         referenceMovementsSection: true,
                         replaceView: true,
-                        onPressed: () {
-                          // if (_videoControllers[tabController.index] != null) {
-                          //   _videoControllers[tabController.index].pause();
-                          // }
-                        },
+                        onPressed: () {},
                         content: _movementInfoSuccess.relatedMovements,
                         width: ScreenUtils.width(context) / 1.2,
                       ),

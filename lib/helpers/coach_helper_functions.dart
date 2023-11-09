@@ -406,7 +406,7 @@ class CoachHelperFunctions {
         : const SizedBox.shrink();
   }
 
-  static Widget getSendVideos(BuildContext context, List<SegmentSubmission> sentVideosList) {
+  static Widget getSentVideos(BuildContext context, List<SegmentSubmission> sentVideosList) {
     return sentVideosList.isNotEmpty
         ? coachTabCarouselComponent(context,
             viewAllTapAction: () => Navigator.pushNamed(context, routeLabels[RouteEnum.sentVideos], arguments: {'sentVideosContent': sentVideosList}),

@@ -343,12 +343,5 @@ class CoachTimelineFunctions {
       });
     }
     return _coachRecommendationTimelineContent;
-    // _coachRecommendationTimelineContent.isNotEmpty
-    //     ? _coachRecommendationTimelineContent.forEach((recomendationTimelineItem) {
-    //         if (_allContent.where((contentElement) => contentElement.contentName == recomendationTimelineItem.contentName).isEmpty) {
-    //           _allContent.add(recomendationTimelineItem);
-    //         }
-    //       })
-    //     : null;
   }
 }
