@@ -229,18 +229,12 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
 
   bool existsIndex(int index) => index != null && index <= (_activeCourses.length - 1);
 
-  CustomScrollView _getCourseContentView(int index, BuildContext context) {
+  Widget _getCourseContentView(int index, BuildContext context) {
     int currentIndex = index ?? 0;
-    return CustomScrollView(
-      physics: OlukoNeumorphism.listViewPhysicsEffect,
-      cacheExtent: 105.0 * _growListOfCourses[currentIndex].classes.length,
-      slivers: <Widget>[
-        SliverStack(
-          children: [
-            getClassView(currentIndex, context),
-            if (_horizontalScrollingAvailable) getTabBar(context, currentIndex),
-          ],
-        ),
+    return Wrap(
+      children: [
+        getClassView(currentIndex, context),
+        if (_horizontalScrollingAvailable) getTabBar(context, currentIndex),
       ],
     );
   }
@@ -372,78 +366,87 @@ class _HomeNeumorphicContentState extends State<HomeNeumorphicContent> {
     );
   }
 
-  SliverList getClassView(int index, BuildContext context) {
-    int currentUser = index ?? 0;
-    BlocProvider.of<VideoBloc>(context).getAspectRatio(_activeCourses[currentUser].video);
-    return SliverList(
-      delegate: SliverChildListDelegate([
-        Padding(
-          padding: const EdgeInsets.only(bottom: 3),
-          child: VisibilityDetector(
-            key: Key('video$currentUser'),
-            onVisibilityChanged: (VisibilityInfo info) {
-              if (info.visibleFraction < 0.1 && mounted && courseIndex == currentUser && !_isVideoPlaying && courseIndex <= _activeCourses.length) {
-                BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, widgetIndex: currentUser);
-              } else {
-                if (mounted) {
-                  BlocProvider.of<CarouselBloc>(context).widgetIsHiden(false, widgetIndex: currentUser);
-                }
-              }
-            },
-            child: OlukoVideoPreview(
-              showBackButton: true,
-              image: _activeCourses[currentUser].image,
-              video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _activeCourses[currentUser].videoHls, videoUrl: _activeCourses[currentUser].video),
-              onBackPressed: () => Navigator.pop(context),
-              onPlay: () => isVideoPlaying(),
-              videoVisibilty: _isVideoPlaying,
-              fromHomeContent: widget.isFromHome,
-              bottomWidgets: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Text(
-                    _activeCourses[currentUser].name,
-                    style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.w600),
-                  ),
-                ),
+  Widget getClassView(int index, BuildContext context) {
+    final int _currentIndex = index ?? 0;
+    if (_activeCourses[_currentIndex]?.video != null) {
+      BlocProvider.of<VideoBloc>(context).getAspectRatio(_activeCourses[_currentIndex]?.video);
+    }
+    return Container(
+      width: ScreenUtils.width(context),
+      height: ScreenUtils.height(context),
+      child: ListView.builder(
+          padding: EdgeInsets.zero,
+          shrinkWrap: true,
+          itemCount: 1,
+          itemBuilder: (buildContext, index) {
+            return Column(
+              children: [
+                getVideoPreview(_currentIndex, context),
+                getCourseData(_currentIndex),
+                getClassCards(_currentIndex),
               ],
+            );
+          }),
+    );
+  }
+
+  BlocBuilder<ClassSubscriptionBloc, ClassSubscriptionState> getClassCards(int _currentIndex) {
+    return BlocBuilder<ClassSubscriptionBloc, ClassSubscriptionState>(
+      builder: (context, classState) {
+        if (classState is ClassSubscriptionSuccess) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: CourseClassCardsList(
+              isFromHome: true,
+              openEditScheduleOnInit: widget.openEditScheduleOnInit ?? false,
+              course: _activeCourses[_currentIndex],
+              courseEnrollment: widget.courseEnrollments[_currentIndex],
+              classes: classState.classes,
+              courseIndex: _currentIndex,
+              closeVideo: closeVideo,
+              onPressed: () => Future.delayed(const Duration(milliseconds: 500), () {
+                BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, widgetIndex: _currentIndex);
+              }),
             ),
-          ),
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
+    );
+  }
+
+  Padding getCourseData(int _currentIndex) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10.0, right: 15, left: 15),
+      child: Text(
+        _activeCourses[_currentIndex].description ?? '',
+        style: OlukoFonts.olukoBigFont(
+          customFontWeight: FontWeight.normal,
+          customColor: OlukoColors.grayColor,
         ),
+      ),
+    );
+  }
+
+  OlukoVideoPreview getVideoPreview(int _currentIndex, BuildContext context) {
+    return OlukoVideoPreview(
+      showBackButton: true,
+      image: _activeCourses[_currentIndex]?.image,
+      video: VideoPlayerHelper.getVideoFromSourceActive(videoHlsUrl: _activeCourses[_currentIndex]?.videoHls, videoUrl: _activeCourses[_currentIndex]?.video),
+      onBackPressed: () => Navigator.pop(context),
+      onPlay: () => isVideoPlaying(),
+      videoVisibilty: _isVideoPlaying,
+      fromHomeContent: widget.isFromHome,
+      bottomWidgets: [
         Padding(
-          padding: const EdgeInsets.only(top: 10.0, right: 15, left: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Text(
-            _activeCourses[currentUser].description ?? '',
-            style: OlukoFonts.olukoBigFont(
-              customFontWeight: FontWeight.normal,
-              customColor: OlukoColors.grayColor,
-            ),
+            _activeCourses[_currentIndex]?.name,
+            style: OlukoFonts.olukoTitleFont(customFontWeight: FontWeight.w600),
           ),
         ),
-        BlocBuilder<ClassSubscriptionBloc, ClassSubscriptionState>(
-          builder: (context, classState) {
-            if (classState is ClassSubscriptionSuccess) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: CourseClassCardsList(
-                  isFromHome: true,
-                  openEditScheduleOnInit: widget.openEditScheduleOnInit ?? false,
-                  course: _activeCourses[currentUser],
-                  courseEnrollment: widget.courseEnrollments[currentUser],
-                  classes: classState.classes,
-                  courseIndex: currentUser,
-                  closeVideo: closeVideo,
-                  onPressed: () => Future.delayed(const Duration(milliseconds: 500), () {
-                    BlocProvider.of<CarouselBloc>(context).widgetIsHiden(true, widgetIndex: currentUser);
-                  }),
-                ),
-              );
-            } else {
-              return const SizedBox();
-            }
-          },
-        ),
-      ]),
+      ],
     );
   }
 
