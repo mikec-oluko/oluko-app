@@ -355,7 +355,7 @@ class _StoryPageState extends State<StoryPage> with SingleTickerProviderStateMix
   }
 
   String getDurationRecordString() {
-    return '${_splitResultString().first}:  ${TimeConverter.durationToString(Duration(seconds: int.parse(_splitResultString().last.trim())))}';
+    return '${_splitResultString().first}:  ${TimeConverter.secondsToMinutes(double.parse(_splitResultString().last), oneDigitMinute: true)}';
   }
 
   List<String> _splitResultString() => widget.stories[_currentIndex].result.split(':');

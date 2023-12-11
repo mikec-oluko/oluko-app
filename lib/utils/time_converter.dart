@@ -12,18 +12,14 @@ class TimeConverter {
     return (milliseconds / 1000);
   }
 
-  static String secondsToMinutes(double totalSeconds) {
+  static String secondsToMinutes(double totalSeconds, {bool oneDigitMinute = false}) {
     int minutes = totalSeconds ~/ 60;
     num seconds = totalSeconds % 60;
     String stringSeconds = seconds.toString();
     List<String> splittedSeconds = stringSeconds.split('.');
     String finalSeconds = splittedSeconds[0];
-    String minutesStr;
-    if (seconds < 10) {
-      minutesStr = minutes < 10 ? '0$minutes:0$finalSeconds' : '$minutes:0$finalSeconds';
-    } else {
-      minutesStr = minutes < 10 ? '0$minutes:$finalSeconds' : '$minutes:$finalSeconds';
-    }
+    String minutesStr = '${(minutes < 10) ? oneDigitMinute ? '$minutes' : '0$minutes' : '$minutes'}:${(seconds < 10) ? '0$finalSeconds' : finalSeconds}';
+
     return minutesStr;
   }
 
