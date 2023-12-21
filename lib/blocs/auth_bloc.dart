@@ -138,13 +138,13 @@ class AuthBloc extends Cubit<AuthState> {
     }
 
     final firebaseUser = FirebaseAuth.instance.currentUser;
-    if ((firebaseUser?.emailVerified != null && !firebaseUser.emailVerified) || (firebaseUser?.emailVerified == null && true)) {
+    /*if ((firebaseUser?.emailVerified != null && !firebaseUser.emailVerified) || (firebaseUser?.emailVerified == null && true)) {
       //TODO: trigger to send another email
       await firebaseUser?.updateEmail(user.email);
       FirebaseAuth.instance.signOut();
       AppMessages.clearAndShowSnackbarTranslated(context, 'pleaseCheckYourEmail');
       emit(AuthGuest());
-    } else {
+    } else {*/
       AuthRepository().storeLoginData(user);
       UserRepository().updateLastTimeOpeningApp(user);
       if (user.currentPlan < 0 || user.currentPlan == null) {
@@ -170,7 +170,7 @@ class AuthBloc extends Cubit<AuthState> {
           navigateToNextScreen(context, firebaseUser.uid);
         }
       }
-    }
+    //}
   }
 
   void navigateToNextScreen(BuildContext context, String userId) async {
